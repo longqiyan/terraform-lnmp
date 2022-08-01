@@ -3,11 +3,11 @@ variable "instance_type" {
   description = "计算实例类型"
 }
 variable "access_key" {
-  default = "AKIAT3E3VI2SQXRWMNXH"
+  default = "**********"
   description = "AK"
 }
 variable "secret_key" {
-  default = "pxOWtnqeiasK2gOz87bKsNz/AoV8jvG301e1t1kf"
+  default = "************"
   description = "SK"
 }
 variable "region" {
