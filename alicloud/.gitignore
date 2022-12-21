@@ -1,0 +1,8 @@
+.idea
+ansible/cloudlego-docker/.DS_Store
+ansible/cloudlego-docker/sql/.DS_Store
+.DS_Store
+ansible/.DS_Store
+/.idea/*
+.DS_Store
+ansible/.DS_Store

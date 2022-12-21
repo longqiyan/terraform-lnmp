@@ -1,0 +1,44 @@
+---
+- hosts: cloudlego
+  gather_facts: false
+  tasks:
+    - name: Wait connection
+      wait_for_connection:
+        sleep: 1
+        timeout: "{{ wait_connection_timeout }}"
+
+    - name: copy cloudlego docker-compose config
+      synchronize:
+        src: cloudlego-docker
+        dest: /opt/
+
+    - name: install docker
+      shell: |
+        test -f /opt/cloudlego-docker/docker-deploy.sh || curl -o /opt/cloudlego-docker/docker-deploy.sh https://idcos.oss-cn-hangzhou-internal.aliyuncs.com/docker-deploy.sh
+        bash /opt/cloudlego-docker/docker-deploy.sh
+
+    - name: docker login
+      shell: |
+        docker login --username=idcos --password=Yunjikeji#123 registry-vpc.cn-hangzhou.aliyuncs.com
+
+    - name: copy cloudlego docker-compose jinja config
+      template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        mode: "0644"
+      with_items:
+        - { src: cloudlego-docker/.env, dest: /opt/cloudlego-docker/.env }
+        - {
+            src: cloudlego-docker/cloudlego.yml,
+            dest: /opt/cloudlego-docker/cloudlego.yml,
+          }
+
+    - name: pull all images
+      shell: |
+        cd /opt/cloudlego-docker/
+        for i in cloudlego.yml database.yml middleware.yml;do docker-compose -f $i pull;done
+
+    - name: start app
+      shell: |
+        cd /opt/cloudlego-docker/
+        bash run.sh

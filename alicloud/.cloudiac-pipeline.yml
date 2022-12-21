@@ -1,0 +1,27 @@
+---
+version: 0.5
+
+apply:
+  steps:
+    terraformApply:
+      before:
+        - |
+          test -f ansible/export.yml || cd /cloudiac/workspace/code
+          bash ansible/run.sh export.yml
+          pwd
+
+    ansiblePlay:
+      after:
+        - |
+          test -f ansible/import.yml || cd /cloudiac/workspace/code
+          bash ansible/run.sh import.yml
+          pwd
+
+destroy:
+  steps:
+    terraformDestroy:
+      before:
+        - |
+          test -f ansible/export.yml || cd /cloudiac/workspace/code
+          bash ansible/run.sh export.yml
+          pwd

@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  cloud-jet-schedule-job:
+    image: {{ cloud_jet_schedule_job_image }}
+    pull_policy: always
+    env_file: ./.env
+    ports:
+      - "8888:8888"
+    volumes:
+      - $LOG_DIR:/usr/yunji/logs
+    restart: always
+
+  cloud-glide-record:
+    image: {{ cloud_glide_record_image }}
+    pull_policy: always
+    env_file: ./.env
+    ports:
+      - "8081:8081"
+      - "8889:8889"
+    volumes:
+      - $LOG_DIR:/usr/yunji/logs
+    restart: always
+
+  cloud-glide-workflow:
+    image: {{ cloud_glide_workflow_image }}
+    pull_policy: always
+    env_file: ./.env
+    ports:
+      - "8083:8083"
+      - "9999:9999"
+    volumes:
+      - $LOG_DIR:/usr/yunji/logs
+    restart: always
+
+  cloud-glide-web:
+    image: {{ cloud_glide_web_image }}
+    pull_policy: always
+    env_file: ./.env
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - $LOG_DIR:/usr/yunji/logs
+    restart: always
