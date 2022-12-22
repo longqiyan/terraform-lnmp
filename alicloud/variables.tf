@@ -155,5 +155,5 @@ variable "create_spot_instance" {
   default = true
 }
 variable "cloudiac_env_id" {
-  default = "null"
+  default = ""
 }
