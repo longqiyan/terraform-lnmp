@@ -1,57 +1,59 @@
-provider "alicloud" {
-  region = var.region
-}
-
-variable "tags_application" { default = "CloudLego" }
-
-
 //根据资源组名称查询资源组
-data "alicloud_resource_manager_resource_groups" "rmrg" {
-  ids = [var.resource_group_id]
+module "account" {
+  //source为对应module的资源查询的代码存放地址
+  source     = "git::https://gitlab.yun.shop/iac-module/terraform-ydd-account.git//modules/alicloud-account?ref=v1.0.0"
+  account_id = var.account_id
 }
 
-//根据资源组id查询vpc
-data "alicloud_vpcs" "vpcs2" {
-  ids = [var.vpc_id]
+module "networking" {
+  //source为对应module的资源查询的代码存放地址
+  source     = "git::https://gitlab.yun.shop/iac-module/terraform-ydd-account.git//modules/alicloud-networking?ref=v1.0.0"
+  account_id = var.account_id
 }
-
-//根据资源组id查询vswitch
-data "alicloud_vswitches" "vsws" {
-  #  zone_id           = var.availability_zone
-  vpc_id       = var.vpc_id
-  vswitch_name = var.vswitch_name
-}
-//根据vpc id查询安全组
-data "alicloud_security_groups" "sgs" {
-  #  name_regex        = "allow_internal"
-  #  ids               = [var.security_group_id]
-  #  vpc_id            = data.alicloud_vpcs.vpcs2.vpcs.0.id
-  resource_group_id = data.alicloud_resource_manager_resource_groups.rmrg.groups.0.id
-}
-
-//查询密钥对
-data "alicloud_ecs_key_pairs" "ekps" {
-  name_regex = var.key_name
-}
-
-
+#//根据资源组名称查询资源组
+#data "alicloud_resource_manager_resource_groups" "rmrg" {
+#  ids = [var.resource_group_id]
+#}
+#
+#//根据资源组id查询vpc
+#data "alicloud_vpcs" "vpcs2" {
+#  ids = [var.vpc_id]
+#}
+#
+#//根据资源组id查询vswitch
+#data "alicloud_vswitches" "vsws" {
+#  #  zone_id           = var.availability_zone
+#  vpc_id       = var.vpc_id
+#  vswitch_name = var.vswitch_name
+#}
+#//根据vpc id查询安全组
+#data "alicloud_security_groups" "sgs" {
+#  #  name_regex        = "allow_internal"
+#  #  ids               = [var.security_group_id]
+#  #  vpc_id            = data.alicloud_vpcs.vpcs2.vpcs.0.id
+#  resource_group_id = data.alicloud_resource_manager_resource_groups.rmrg.groups.0.id
+#}
+#
+#//查询密钥对
+#data "alicloud_ecs_key_pairs" "ekps" {
+#  name_regex = var.key_name
+#}
 resource "alicloud_instance" "instance" {
   count                      = var.instance_number
-  availability_zone          = var.availability_zone
-  # alicloud_security_group.default.*.id 安全组id
-  security_groups            = [var.security_group_id]
+  availability_zone          = module.networking.vswitches.private.zone_id
+  security_groups            = [module.networking.security_groups.private.id]
   instance_type              = var.instance_type
-  spot_strategy       = var.create_spot_instance ? "SpotAsPriceGo" : "NoSpot"
-  spot_price_limit              = 0
+  spot_strategy              = var.create_spot_instance ? "SpotAsPriceGo" : "NoSpot"
+  spot_price_limit           = 0
   system_disk_category       = "cloud_efficiency"
   system_disk_size           = var.disk_size
   image_id                   = var.image_id
   instance_name              = var.instance_name
-  vswitch_id                 = data.alicloud_vswitches.vsws.vswitches.0.id
+  vswitch_id                 = module.networking.vswitches.private.vswitch_id
   # 设置带宽大于1， 则自动分配公网IP
   internet_max_bandwidth_out = var.bandwidth_out
-  key_name                   = data.alicloud_ecs_key_pairs.ekps.key_pairs.0.id
-  resource_group_id          = data.alicloud_resource_manager_resource_groups.rmrg.groups.0.id
+  key_name                   = module.account.key_pair.id
+  resource_group_id          = module.networking.resource_group.id
   private_ip                 = length(var.private_ip) > 0 ? var.private_ip : ""
   tags                       = {
     application = var.tags_application
@@ -108,8 +110,8 @@ resource "ansible_host" "cloudlego" {
 }
 
 resource "random_integer" "this" {
-  min = 100000
-  max = 999999
+  min     = 100000
+  max     = 999999
   keepers = {
     # Generate a new id each time we switch to a new AMI id
     listener_arn = "idcos-jet"

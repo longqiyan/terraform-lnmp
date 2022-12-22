@@ -1,11 +1,19 @@
+variable "account_id" {
+  default = "idcos-idp"
+}
+
 variable "region" {
   default = "cn-hangzhou"
 }
 
-variable "availability_zone" {
-  default     = "cn-hangzhou-k"
-  description = "可用区域"
+variable "tags_application" {
+  default = "CloudLego"
 }
+
+#variable "availability_zone" {
+#  default     = "cn-hangzhou-k"
+#  description = "可用区域"
+#}
 
 variable "app_name" {
   default     = "cloudlego"
@@ -34,10 +42,10 @@ variable "bandwidth_out" {
   default     = 0
 }
 
-variable "resource_group_id" {
-  # default     = "test1$"
-  description = "资源组名称"
-}
+#variable "resource_group_id" {
+#  # default     = "test1$"
+#  description = "资源组名称"
+#}
 
 variable "disk_size" {
   default     = "50"
@@ -54,10 +62,10 @@ variable "public_key" {
   default     = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDVr+09wfrsUpLyBv6R5AYf+G001zY7a+M9Pe5NVgg7J/2zIFAWssoLVgi1+3qh6sUt+aBe21YKXRrCkFeYbcK9XFnr/PhhZxmYimBrdGkqoWB4LBq4FRP+qn2EazfRx/8ypcRIw7jEVH8Ye8BirY7BJO7LN1n8pmOD03OiwrUeFAwBN6flQcm9ytJGglUXr//SDDYytBpyy9d9umFdRLJ7N3cOyvmHEqqlZzQMwAYiRWKuFmPNxh5jmxenSbQKqAFHD/keNZXVH0H79k6A7wBXPYsjaGwmcuq3ACElIFwcu8J7M8rVnAkSoDJNefIBt0/Vb9LsaUiWGsy+kU6uX4dPotR4DkI7PKnS72Z05o+85iIdtA9T9Zop9P80wXv1ATNJZM9gzeqLEbcUUpUHCrAdPcg2o8raW0bDcaBLXOD2P+PIfXJtF05ntGzl+QF/xZeoOnOT2xsKPziHdZ0F9h+QlcPEL8TVfG5iep39lVOkKPqDM125OlX6WFu7jdjR8p0= admin@lego"
 }
 
-variable "key_name" {
-  default     = "lego_admin$"
-  description = "配置的公钥名称"
-}
+#variable "key_name" {
+#  default     = "lego_admin$"
+#  description = "配置的公钥名称"
+#}
 
 variable "reinitialized_sql" {
   default     = false
@@ -72,7 +80,7 @@ variable "cloudlego_version" {}
 variable "tags_owner" { default = "wanglei" }
 
 variable "private_ip" {
-  default = ""
+  default     = ""
   description = "指定私有IP，默认为空时不指定。"
 }
 
@@ -104,12 +112,12 @@ variable "is_backup" {
 }
 
 
-variable "vpc_id" {}
+#variable "vpc_id" {}
 #variable "vswitch_id" {}
-variable "vswitch_name" {
-  default = "jet"
-}
-variable "security_group_id" {}
+#variable "vswitch_name" {
+#  default = "jet"
+#}
+#variable "security_group_id" {}
 
 variable "iac_kafka_host" {}
 
@@ -147,5 +155,5 @@ variable "create_spot_instance" {
   default = true
 }
 variable "cloudiac_env_id" {
-  default = "env-cec5u8o6vmfqkjl1pqpg"
+  default = null
 }
