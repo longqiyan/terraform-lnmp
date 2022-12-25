@@ -174,6 +174,7 @@ locals {
 
 
 data "ydd_disk_snapshot_alicloud" "this" {
+  disk_number = 1
   // 这里只传入一个 snapshot name, 查询快照时自动添加序号后缀组成完整名称，
   // 如 "snapshot-appname-disk1-xxxx-001"
   snapshot_name = local.snapshot_name
