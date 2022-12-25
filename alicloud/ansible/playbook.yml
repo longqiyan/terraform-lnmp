@@ -7,6 +7,10 @@
         sleep: 1
         timeout: "{{ wait_connection_timeout }}"
 
+    - name: devices debug info
+      debug:
+        msg: "{{ansible_devices.vdb}}"
+
     - name: Create a new primary partition
       parted:
         device: /dev/vdb
