@@ -12,9 +12,13 @@ terraform {
       source = "hashicorp/random"
       version = "3.4.3"
     }
+#    ydd = {
+#      source = "store.cloudiac.org/jxinging/ydd"
+#      version = "1.0.0"
+#    }
     ydd = {
-      source = "store.cloudiac.org/jxinging/ydd"
-      version = "1.0.0"
+      source  = "store.cloudiac.org/idcos/ydd"
+      version = "1.0.1"
     }
   }
 }

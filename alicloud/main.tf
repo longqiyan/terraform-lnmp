@@ -140,33 +140,73 @@ locals {
   snapshot_name = "snapshot-cloudjet-disk1-${var.cloudiac_env_id}"
 }
 
-// 提供 data source 用于查询己创建的快照
-data "ydd_disk_snapshot_alicloud" "snapshot" {
+#// 提供 data source 用于查询己创建的快照
+#data "ydd_disk_snapshot_alicloud" "snapshot" {
+#  snapshot_name = local.snapshot_name
+#}
+#
+#resource "alicloud_ecs_disk" "ecs_disk" {
+#  zone_id     = module.networking.vswitches.private.zone_id
+#  size        = "60"
+#  disk_name   = "cloudjet_data_disk"
+#  // 如果查询不到 snapshot，这里的 id 值是 null
+#  snapshot_id = data.ydd_disk_snapshot_alicloud.snapshot.snapshot_id
+#}
+#
+#resource "alicloud_ecs_disk_attachment" "ecs_disk_att" {
+#  disk_id     = alicloud_ecs_disk.ecs_disk.id
+#  instance_id = alicloud_instance.instance[0].id
+#}
+#
+#resource "ydd_disk_snapshot_alicloud" "snapshot" {
+#  disk_id       = alicloud_ecs_disk.ecs_disk.id
+#  snapshot_name = local.snapshot_name
+#
+#  // 自动备份策略，
+#  // 可选: on_destroy, X hour[s], X day[s], X week[s], X month[s]
+#  auto_policy = "on_destroy"
+#
+#  // 快照保留天数，默认永久保留
+#  retention_days = "3"
+#  description    = ""
+#}
+
+
+
+data "ydd_disk_snapshot_alicloud" "this" {
+  // 这里只传入一个 snapshot name, 查询快照时自动添加序号后缀组成完整名称，
+  // 如 "snapshot-appname-disk1-xxxx-001"
   snapshot_name = local.snapshot_name
+  resource_group_id    = module.networking.resource_group.id
 }
 
-resource "alicloud_ecs_disk" "ecs_disk" {
-  zone_id     = module.networking.vswitches.private.zone_id
-  size        = "60"
-  disk_name   = "cloudjet_data_disk"
+resource "alicloud_ecs_disk" "test_disk" {
+  zone_id = module.networking.vswitches.private.zone_id
+  size              = "60"
+  category = "cloud_essd"
   // 如果查询不到 snapshot，这里的 id 值是 null
-  snapshot_id = data.ydd_disk_snapshot_alicloud.snapshot.snapshot_id
+  snapshot_id       = data.ydd_disk_snapshot_alicloud.this.snapshot_id
+  resource_group_id    = module.networking.resource_group.id
 }
 
-resource "alicloud_ecs_disk_attachment" "ecs_disk_att" {
-  disk_id     = alicloud_ecs_disk.ecs_disk.id
+resource "alicloud_ecs_disk_attachment" "test_disk_att" {
+  disk_id     = alicloud_ecs_disk.test_disk.id
   instance_id = alicloud_instance.instance[0].id
 }
 
-resource "ydd_disk_snapshot_alicloud" "snapshot" {
-  disk_id       = alicloud_ecs_disk.ecs_disk.id
+resource "ydd_disk_snapshot_alicloud" "test_disk_snapshot" {
+  disk_ids = [alicloud_ecs_disk.test_disk.id]
+  resource_group_id    = module.networking.resource_group.id
+
+  // 这里只传入一个 snapshot name, 创建快照时自动按序号添加后缀，
+  // 如 "snapshot-appname-disk1-xxxx-001"
   snapshot_name = local.snapshot_name
 
   // 自动备份策略，
   // 可选: on_destroy, X hour[s], X day[s], X week[s], X month[s]
+  // 暂时只实现 on_destroy，且为默认值
   auto_policy = "on_destroy"
 
   // 快照保留天数，默认永久保留
-  retention_days = "3"
-  description    = ""
+  retention_days = "1"
 }
