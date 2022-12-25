@@ -2,7 +2,7 @@ version: "2"
 
 services:
   mysql:
-    image: registry-vpc.cn-hangzhou.aliyuncs.com/idcos-common/mysql:5.7.36
+    image: registry-vpc.cn-hangzhou.aliyuncs.com/idcos-common/mysql:5.7.40
     container_name: mysql
     network_mode: "host"
     volumes:
