@@ -173,7 +173,7 @@ locals {
 
 
 
-data "ydd_disk_snapshot_alicloud" "this" {
+data "ydd_disk_snapshot_alicloud" "ss" {
   disk_number = 1
   // 这里只传入一个 snapshot name, 查询快照时自动添加序号后缀组成完整名称，
   // 如 "snapshot-appname-disk1-xxxx-001"
@@ -183,10 +183,10 @@ data "ydd_disk_snapshot_alicloud" "this" {
 
 resource "alicloud_ecs_disk" "test_disk" {
   zone_id = module.networking.vswitches.private.zone_id
-  size              = "60"
+  size    = "60"
   category = "cloud_essd"
   // 如果查询不到 snapshot，这里的 id 值是 null
-  snapshot_id       = data.ydd_disk_snapshot_alicloud.this.snapshot_id
+  snapshot_id       = data.ydd_disk_snapshot_alicloud.ss.snapshots[0].id
   resource_group_id    = module.networking.resource_group.id
 }
 
