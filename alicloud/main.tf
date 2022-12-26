@@ -106,6 +106,7 @@ resource "ansible_host" "cloudlego" {
     mysql_db       = var.mysql_db
     mysql_user     = var.mysql_user
     mysql_password = var.mysql_password
+
     enable_backup  = var.enable_backup
   }
 }
