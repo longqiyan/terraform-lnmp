@@ -106,6 +106,7 @@ resource "ansible_host" "cloudlego" {
     mysql_db       = var.mysql_db
     mysql_user     = var.mysql_user
     mysql_password = var.mysql_password
+    enable_backup  = var.enable_backup
   }
 }
 
@@ -139,39 +140,6 @@ locals {
   // snapshot_name 需要保证唯一
   snapshot_name = "snapshot-cloudjet-disk1-${var.cloudiac_env_id}"
 }
-
-#// 提供 data source 用于查询己创建的快照
-#data "ydd_disk_snapshot_alicloud" "snapshot" {
-#  snapshot_name = local.snapshot_name
-#}
-#
-#resource "alicloud_ecs_disk" "ecs_disk" {
-#  zone_id     = module.networking.vswitches.private.zone_id
-#  size        = "60"
-#  disk_name   = "cloudjet_data_disk"
-#  // 如果查询不到 snapshot，这里的 id 值是 null
-#  snapshot_id = data.ydd_disk_snapshot_alicloud.snapshot.snapshot_id
-#}
-#
-#resource "alicloud_ecs_disk_attachment" "ecs_disk_att" {
-#  disk_id     = alicloud_ecs_disk.ecs_disk.id
-#  instance_id = alicloud_instance.instance[0].id
-#}
-#
-#resource "ydd_disk_snapshot_alicloud" "snapshot" {
-#  disk_id       = alicloud_ecs_disk.ecs_disk.id
-#  snapshot_name = local.snapshot_name
-#
-#  // 自动备份策略，
-#  // 可选: on_destroy, X hour[s], X day[s], X week[s], X month[s]
-#  auto_policy = "on_destroy"
-#
-#  // 快照保留天数，默认永久保留
-#  retention_days = "3"
-#  description    = ""
-#}
-
-
 
 data "ydd_disk_snapshot_alicloud" "ss" {
   disk_number = 1
@@ -207,7 +175,8 @@ resource "ydd_disk_snapshot_alicloud" "test_disk_snapshot" {
   // 可选: on_destroy, X hour[s], X day[s], X week[s], X month[s]
   // 暂时只实现 on_destroy，且为默认值
   auto_policy = "on_destroy"
+  # auto_policy = retention_days == "true" ? "on_destroy" : ""
 
   // 快照保留天数，默认永久保留
-  retention_days = "1"
+  retention_days = var.snapshot_retention_days
 }

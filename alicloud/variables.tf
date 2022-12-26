@@ -157,3 +157,13 @@ variable "create_spot_instance" {
 variable "cloudiac_env_id" {
   default = ""
 }
+
+variable "snapshot_retention_days" {
+  description = "快照保存时间（天）"
+  default = "3"
+}
+
+variable "enable_backup" {
+  description = "是否开启数据备份恢复"
+  default = "false"
+}
