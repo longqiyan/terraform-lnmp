@@ -107,6 +107,9 @@ resource "ansible_host" "cloudlego" {
     mysql_user     = var.mysql_user
     mysql_password = var.mysql_password
     enable_backup  = var.enable_backup
+
+    //最大堆
+    max_heap = var.max_heap
   }
 }
 

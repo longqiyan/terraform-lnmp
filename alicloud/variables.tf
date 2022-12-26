@@ -167,3 +167,8 @@ variable "enable_backup" {
   description = "是否开启数据备份恢复"
   default = "false"
 }
+
+variable "max_heap" {
+  description = "JET-API服务的最大堆"
+  default = "2g"
+}
