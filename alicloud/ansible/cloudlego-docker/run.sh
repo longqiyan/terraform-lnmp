@@ -31,7 +31,7 @@ if [ ! -z $REINITIALIZED_SQL ] && [ "$REINITIALIZED_SQL" == "true" ];then
     find /var/lib/docker/volumes/ -type f -name ".user_scripts_initialized" | xargs rm -f 
 fi
 
-if [ "$MYSQL_DB"  == "cloud_glide" ];then
+if [ "$MYSQL_DB"  == "cloud_glide" ] || [ "$ENABLE_BACKUP"  == "true" ];then
     ## database
     docker-compose -f database.yml up -d
     while :; do
