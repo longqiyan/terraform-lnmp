@@ -2,12 +2,12 @@ version: "2"
 
 services:
   mysql:
-    image: registry-vpc.cn-hangzhou.aliyuncs.com/idcos-common/mysql:5.7.36
+    image: registry-vpc.cn-hangzhou.aliyuncs.com/idcos-common/mysql:5.7.40
     container_name: mysql
     network_mode: "host"
     volumes:
-      - mysql_data:/bitnami/mysql/data
-      - ./my.cnf:/opt/bitnami/mysql/conf/my_custom.cnf:ro
+      - /data/docker/mysql:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/conf.d/my.cnf:ro
       - ./sql:/docker-entrypoint-initdb.d
     environment:
       - TZ=Asia/Shanghai
@@ -18,12 +18,7 @@ services:
       - MYSQL_COLLATE=utf8mb4_general_ci
       - MYSQL_AUTHENTICATION_PLUGIN=mysql_native_password
     healthcheck:
-      test: ['CMD', '/opt/bitnami/scripts/mysql/healthcheck.sh']
-      interval: 15s
-      timeout: 5s
-      retries: 6
-    restart: always
-
-volumes:
-  mysql_data:
-    driver: local
+      test: mysql ${MYSQL_DB} --user=${MYSQL_USER} --password='$MYSQL_PASSWORD' --silent --execute "SELECT 1;"
+      interval: 30s
+      timeout: 10s
+      retries: 5

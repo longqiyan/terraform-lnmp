@@ -31,12 +31,16 @@ if [ ! -z $REINITIALIZED_SQL ] && [ "$REINITIALIZED_SQL" == "true" ];then
     find /var/lib/docker/volumes/ -type f -name ".user_scripts_initialized" | xargs rm -f 
 fi
 
-if [ "$MYSQL_DB"  == "cloud_glide" ];then
+if [ "$MYSQL_DB"  == "cloud_glide" ] || [ "$ENABLE_BACKUP" == "true" ];then
     ## database
     docker-compose -f database.yml up -d
     while :; do
-        docker logs mysql 2>&1 | grep -q 'mysqld: ready for connections' && break
+      result=$(docker inspect mysql | grep healthy)
+      if [ "$result" != "" ]; then
+        break
+      else
         sleep 1s
+      fi
     done
 fi
 

@@ -1,6 +1,6 @@
 ---
 - hosts: cloudlego
-  gather_facts: false
+  gather_facts: true
   tasks:
     - name: Wait connection
       ## 每秒尝试进行一次连接直到连接成功或者超时

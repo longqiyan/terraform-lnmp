@@ -1,11 +1,36 @@
 ---
 - hosts: cloudlego
-  gather_facts: false
+  gather_facts: true
   tasks:
     - name: Wait connection
       wait_for_connection:
         sleep: 1
         timeout: "{{ wait_connection_timeout }}"
+
+    - name: Create a new primary partition
+      parted:
+        device: /dev/vdb
+        number: 1
+        state: present
+      when: "ansible_devices.vdb.partitions == {}"
+
+    - name: Format disk
+      filesystem:
+        dev: /dev/vdb1
+        fstype: ext4
+      when: "ansible_devices.vdb.partitions == {}"
+
+    - name: create data dir
+      file:
+        path: /data
+        state: directory
+
+    - name: Mount file system
+      mount:
+        fstype: ext4
+        src: /dev/vdb1
+        path: /data
+        state: mounted
 
     - name: copy cloudlego docker-compose config
       synchronize:
