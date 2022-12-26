@@ -35,8 +35,12 @@ if [ "$MYSQL_DB"  == "cloud_glide" ];then
     ## database
     docker-compose -f database.yml up -d
     while :; do
-        docker logs mysql 2>&1 | grep -q 'mysqld: ready for connections' && break
+      result=$(docker inspect mysql | grep healthy)
+      if [ "$result" != "" ]; then
+        break
+      else
         sleep 1s
+      fi
     done
 fi
 
