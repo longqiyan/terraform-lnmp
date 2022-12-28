@@ -13,12 +13,14 @@
         number: 1
         state: present
       when: "ansible_devices.vdb.partitions == {}"
+      ignore_errors: yes
 
     - name: Format disk
       filesystem:
         dev: /dev/vdb1
         fstype: ext4
       when: "ansible_devices.vdb.partitions == {}"
+      ignore_errors: yes
 
     - name: create data dir
       file:
@@ -31,6 +33,7 @@
         src: /dev/vdb1
         path: /data
         state: mounted
+      ignore_errors: yes
 
     - name: copy cloudlego docker-compose config
       synchronize:
