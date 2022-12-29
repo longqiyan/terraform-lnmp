@@ -14,7 +14,7 @@ terraform {
     }
     ydd = {
       source  = "store.cloudiac.org/idcos/ydd"
-      version = "1.0.1"
+      version = "1.0.2"
     }
   }
 }
