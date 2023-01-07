@@ -142,7 +142,7 @@ resource "alicloud_pvtz_zone_record" "foo" {
 
 locals {
   // snapshot_name 需要保证唯一
-  snapshot_name = "snapshot-cloudjet-disk1-${var.cloudiac_env_id}"
+  snapshot_name = "snapshot-cloudjet-disk1-${var.cloudiac_env_id}-${var.create_time}"
 }
 
 data "ydd_disk_snapshot_alicloud" "ss" {
