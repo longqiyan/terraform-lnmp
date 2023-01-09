@@ -141,6 +141,7 @@ resource "alicloud_pvtz_zone_record" "foo" {
 }
 
 resource "random_string" "random_string" {
+  count = 1
   length = 5
   special = false
   min_numeric = 1
