@@ -177,3 +177,8 @@ variable "create_time" {
   description = "创建时间"
   default = ""
 }
+
+variable "snapshot_id" {
+  type = string
+  default = ""
+}

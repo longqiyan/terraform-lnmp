@@ -140,9 +140,17 @@ resource "alicloud_pvtz_zone_record" "foo" {
   ttl     = 60
 }
 
+resource "random_string" "random_string" {
+  length = 5
+  special = false
+  min_numeric = 1
+  min_lower = 2
+  min_upper = 2
+}
+
 locals {
   // snapshot_name 需要保证唯一
-  snapshot_name = "snapshot-cloudjet-disk1-${var.cloudiac_env_id}-${var.create_time}"
+  snapshot_name = "${random_string.random_string[0].result}-${var.cloudiac_env_id}-${var.create_time}"
 }
 
 data "ydd_disk_snapshot_alicloud" "ss" {
@@ -158,7 +166,7 @@ resource "alicloud_ecs_disk" "test_disk" {
   size    = "60"
   category = "cloud_essd"
   // 如果查询不到 snapshot，这里的 id 值是 null
-  snapshot_id       = data.ydd_disk_snapshot_alicloud.ss.snapshots[0].id
+  snapshot_id       = var.snapshot_id == "" ? data.ydd_disk_snapshot_alicloud.ss.snapshots[0].id : var.snapshot_id
   resource_group_id    = module.networking.resource_group.id
 }
 
