@@ -165,20 +165,10 @@ variable "snapshot_retention_days" {
 
 variable "enable_backup" {
   description = "是否开启数据备份恢复"
-  default = "false"
+  default = "true"
 }
 
 variable "max_heap" {
   description = "JET-API服务的最大堆"
   default = "2g"
-}
-
-variable "create_time" {
-  description = "创建时间"
-  default = "20-1"
-}
-
-variable "snapshot_id" {
-  type = string
-  default = "1"
 }

@@ -158,7 +158,7 @@ resource "alicloud_ecs_disk" "test_disk" {
   size    = "60"
   category = "cloud_essd"
   // 如果查询不到 snapshot，这里的 id 值是 null
-  snapshot_id       = var.snapshot_id == "1" ? data.ydd_disk_snapshot_alicloud.ss.snapshots[0].id : var.snapshot_id
+  snapshot_id       = data.ydd_disk_snapshot_alicloud.ss.snapshots[0].id
   resource_group_id    = module.networking.resource_group.id
 }
 

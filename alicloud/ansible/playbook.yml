@@ -57,9 +57,9 @@
       with_items:
         - { src: cloudlego-docker/.env, dest: /opt/cloudlego-docker/.env }
         - {
-          src: cloudlego-docker/cloudlego.yml,
-          dest: /opt/cloudlego-docker/cloudlego.yml,
-        }
+            src: cloudlego-docker/cloudlego.yml,
+            dest: /opt/cloudlego-docker/cloudlego.yml,
+          }
 
     - name: pull all images
       shell: |
