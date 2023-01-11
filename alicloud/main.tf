@@ -140,18 +140,9 @@ resource "alicloud_pvtz_zone_record" "foo" {
   ttl     = 60
 }
 
-resource "random_string" "random_string" {
-  count = 1
-  length = 5
-  special = false
-  min_numeric = 1
-  min_lower = 2
-  min_upper = 2
-}
-
 locals {
   // snapshot_name 需要保证唯一
-  snapshot_name = "snapshot-cloudjet-disk-${var.cloudiac_env_id}"
+  snapshot_name = "snapshot-cloudjet-disk1-${var.cloudiac_env_id}"
 }
 
 data "ydd_disk_snapshot_alicloud" "ss" {
