@@ -141,7 +141,7 @@ variable "mysql_db" {
   default = "cloud_glide"
 }
 variable "mysql_user" {
-  default = "admin"
+  default = "root"
 }
 variable "mysql_password" {
   default = "Yunjikeji#123"
