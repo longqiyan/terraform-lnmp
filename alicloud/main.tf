@@ -151,7 +151,7 @@ resource "random_string" "random_string" {
 
 locals {
   // snapshot_name 需要保证唯一
-  snapshot_name = "snapshot-cloudjet-disk-${var.cloudiac_env_id}-${var.create_time}"
+  snapshot_name = "snapshot-cloudjet-disk-${var.cloudiac_env_id}"
 }
 
 data "ydd_disk_snapshot_alicloud" "ss" {
