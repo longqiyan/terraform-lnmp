@@ -155,7 +155,7 @@ variable "create_spot_instance" {
   default = true
 }
 variable "cloudiac_env_id" {
-  default = ""
+  default = "ss"
 }
 
 variable "snapshot_retention_days" {
@@ -175,10 +175,10 @@ variable "max_heap" {
 
 variable "create_time" {
   description = "创建时间"
-  default = ""
+  default = "20-1"
 }
 
 variable "snapshot_id" {
   type = string
-  default = ""
+  default = "1"
 }
