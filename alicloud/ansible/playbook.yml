@@ -35,32 +35,32 @@
         state: mounted
       ignore_errors: yes
 
-    - name: 取消旧数据挂载
-      mount:
-        src: "/dev/vdb1"
-        path: "/data"
-        fstype: etx4
-        state: absent
-      ignore_errors: yes
-      when: not vdb_result.stat.exists
-
-    - name: 重新加载系统服务文件
-      systemd:
-        daemon_reload: yes
-
-    - name: 等待系统重启
-      wait_for_connection:
-        sleep: 30
-        timeout: "{{ wait_connection_timeout }}"
-
-    - name: "Mount /dev/vdc1 to /data"
-      mount:
-        src: "/dev/vdc1"
-        path: "/data"
-        fstype: ext4
-        state: mounted
-      ignore_errors: yes
-      when: not vdb_result.stat.exists
+#    - name: 取消旧数据挂载
+#      mount:
+#        src: "/dev/vdb1"
+#        path: "/data"
+#        fstype: etx4
+#        state: absent
+#      ignore_errors: yes
+#      when: not vdb_result.stat.exists
+#
+#    - name: 重新加载系统服务文件
+#      systemd:
+#        daemon_reload: yes
+#
+#    - name: 等待系统重启
+#      wait_for_connection:
+#        sleep: 30
+#        timeout: "{{ wait_connection_timeout }}"
+#
+#    - name: "Mount /dev/vdc1 to /data"
+#      mount:
+#        src: "/dev/vdc1"
+#        path: "/data"
+#        fstype: ext4
+#        state: mounted
+#      ignore_errors: yes
+#      when: not vdb_result.stat.exists
 
     - name: copy cloudlego docker-compose config
       synchronize:
