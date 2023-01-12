@@ -21,7 +21,8 @@ services:
     volumes:
       - $LOG_DIR:/usr/yunji/logs
     restart: always
-
+    environment:
+      - JAVA_OPTS=-Xmx{{ max_heap }} -Xms{{ max_heap }}
 
   cloud-glide-workflow:
     image: {{ cloud_glide_workflow_image }}
