@@ -172,3 +172,7 @@ variable "max_heap" {
   description = "JET-API服务的最大堆"
   default = "2g"
 }
+
+variable "snapshot_id" {
+  default = "1"
+}
