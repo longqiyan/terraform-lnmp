@@ -7,6 +7,11 @@
         sleep: 1
         timeout: "{{ wait_connection_timeout }}"
 
+    - name: 恢复时判断/dev/vdb是否存在
+      stat:
+        path: /dev/vdb
+      register: vdb_result
+
     - name: Create a new primary partition
       parted:
         device: /dev/vdb
@@ -36,6 +41,7 @@
       ignore_errors: yes
 
     # 追加逻辑操作
+
     - name: 取消旧数据挂载
       mount:
         src: "/dev/vdb1"
@@ -54,7 +60,7 @@
         sleep: 30
         timeout: "{{ wait_connection_timeout }}"
 
-    - name: "Mount /dev/vdc1 to {{ mount_to }}"
+    - name: "Mount /dev/vdc1 to /data"
       mount:
         src: "/dev/vdc1"
         path: "/data"
