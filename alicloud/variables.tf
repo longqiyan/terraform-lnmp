@@ -21,8 +21,8 @@ variable "app_name" {
 }
 
 variable "instance_type" {
-  default     = "ecs.c6.large"
-  # default     = "ecs.c6.xlarge"
+  #default     = "ecs.c6.large"
+   default     = "ecs.c6.xlarge"
   description = "创建ecs服务器实例规格"
 }
 
