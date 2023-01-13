@@ -102,6 +102,7 @@ resource "random_integer" "this" {
 resource "tencentcloud_cbs_storage" "storage" {
   availability_zone = var.zone_id
   storage_size    = 60
+  force_delete   =true
   storage_name    =  "test"
   storage_type = "CLOUD_SSD"
   // 如果查询不到 snapshot，这里的 id 值是 null
