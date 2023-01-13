@@ -1,0 +1,24 @@
+version: "2"
+
+services:
+  mysql:
+    image: registry.cn-hangzhou.aliyuncs.com/idcos-common/mysql:5.7.40
+    container_name: mysql
+    network_mode: "host"
+    volumes:
+      - /data/docker/mysql:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/conf.d/my.cnf:ro
+      - ./sql:/docker-entrypoint-initdb.d
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - MYSQL_USER=$MYSQL_USER
+      - MYSQL_PASSWORD=$MYSQL_PASSWORD
+      - MYSQL_CHARACTER_SET=utf8mb4
+      - MYSQL_COLLATE=utf8mb4_general_ci
+      - MYSQL_AUTHENTICATION_PLUGIN=mysql_native_password
+    healthcheck:
+      test: mysql ${MYSQL_DB} --user=${MYSQL_USER} --password='$MYSQL_PASSWORD' --silent --execute "SELECT 1;"
+      interval: 30s
+      timeout: 10s
+      retries: 5
