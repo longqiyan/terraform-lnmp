@@ -53,5 +53,5 @@ output "random_integer" {
 //}
 
 output "disk" {
-  value = tencentcloud_instance.foo.*.data_disks
+  value = tencentcloud_instance.foo.*.data_disks[0]
 }
