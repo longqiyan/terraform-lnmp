@@ -43,7 +43,7 @@ resource "tencentcloud_instance" "foo" {
   vpc_id          = module.networking.vpc.vpc_id
   subnet_id       = module.networking.subnets.public.subnet_id
   security_groups = [module.networking.security_groups.public.security_group_id]
-  key_ids     = module.account.kye_pair.key_id
+  key_ids     = [module.account.kye_pair.key_id]
   instance_type = var.instance_type
   instance_name = var.instance_name
 //  key_ids       = [module.account.kye_pair.key_id]
