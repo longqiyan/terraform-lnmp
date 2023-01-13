@@ -53,5 +53,5 @@
 //}
 
 output "disk" {
-  value = tencentcloud_instance.foo.data_disks.data_disk_id
+  value = tencentcloud_instance.foo.data_disks[0].data_disk_id
 }
