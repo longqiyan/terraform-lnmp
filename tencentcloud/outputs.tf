@@ -1,8 +1,8 @@
 output "home_url" {
   value = [
-    for index, instance in tencentcloud_instance :
+    for index, instance in tencentcloud_instance.foo :
     {
-      "home_url" : tencentcloud_instance.foo.private_ip,
+      "home_url" : tencentcloud_instance.foo[index].private_ip,
     }
   ]
 }
@@ -17,11 +17,11 @@ output "password" {
 //
 //
 output "public_ip" {
-  value = tencentcloud_instance.foo.public_ip
+  value = tencentcloud_instance.foo.*.public_ip
 }
 
 output "private_ip" {
-  value = tencentcloud_instance.foo.private_ip
+  value = tencentcloud_instance.foo.*.private_ip
 }
 
 output "mysql_db" {
@@ -53,5 +53,5 @@ output "random_integer" {
 //}
 
 output "disk" {
-  value = tencentcloud_instance.foo.data_disks[0].data_disk_id
+  value = tencentcloud_instance.foo.*.data_disks[0].data_disk_id
 }
