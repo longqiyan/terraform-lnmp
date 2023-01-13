@@ -53,5 +53,11 @@ output "random_integer" {
 //}
 
 output "disk" {
-  value = tencentcloud_instance.foo.*.data_disks[0].data_disk_id
+  value =[
+  for index, instance in tencentcloud_instance.foo :
+  {
+   " disk_id" : tencentcloud_instance.foo[index].data_disks[0].data_disk_id
+  }
+  ]
+
 }
