@@ -128,7 +128,9 @@ variable "is_backup" {
   default     = false
 }
 
-variable "iac_kafka_host" {}
+variable "iac_kafka_host" {
+  default = ""
+}
 
 variable "iac_kafka_user" {
   default = "admin"
