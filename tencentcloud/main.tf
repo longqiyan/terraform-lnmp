@@ -46,7 +46,7 @@ resource "tencentcloud_instance" "foo" {
   key_ids     = module.account.kye_pair.key_id
   instance_type = var.instance_type
   instance_name = var.instance_name
-  key_ids       = [module.account.kye_pair.key_id]
+//  key_ids       = [module.account.kye_pair.key_id]
   private_ip           = var.private_ip
   internet_max_bandwidth_out   = var.internet_bandwidth
   internet_charge_type = var.internet_charge_type
