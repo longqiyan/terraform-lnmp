@@ -38,7 +38,7 @@ module "networking" {
 //}
 
 resource "tencentcloud_instance" "foo" {
-
+  count              = var.instance_number
   availability_zone         = var.zone_id
   vpc_id          = module.networking.vpc.vpc_id
   subnet_id       = module.networking.subnets.public.subnet_id
@@ -72,13 +72,13 @@ locals {
 resource "ansible_host" "cloudlego" {
   count              = var.instance_number
   //inventory_hostname = var.internet_bandwidth >= 1 ? module.instance[count.index].instance.public_ip : module.instance[count.index].instance.private_ip
-  inventory_hostname = var.internet_bandwidth >= 1 ? tencentcloud_instance.foo.public_ip : tencentcloud_instance.foo.private_ip
+  inventory_hostname = var.internet_bandwidth >= 1 ? tencentcloud_instance.foo.public_ip[count.index] : tencentcloud_instance.foo.private_ip [count.index]
   groups             = [format("%s", var.app_name)]
 
   vars = {
     wait_connection_timeout = 600
-    public_ip               = tencentcloud_instance.foo.public_ip
-    private_ip              =tencentcloud_instance.foo.private_ip
+    public_ip               = tencentcloud_instance.foo.public_ip[count.index]
+    private_ip              = tencentcloud_instance.foo.private_ip[count.index]
 
     cloud_glide_record_image     = var.cloud_glide_record_image
     cloud_jet_schedule_job_image = var.cloud_jet_schedule_job_image
