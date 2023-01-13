@@ -7,30 +7,30 @@
       wait_for_connection:
         sleep: 1
         timeout: "{{ wait_connection_timeout }}"
-    - name: export mysql data to oss
-      shell: |
-        # 活跃环境判断
-        if [[ {{ cloudiac_env_status }} == "active" ]]; then
-        # oss环境初始化
-          if [[ ! -f ossutil64 ]]; then
-            curl -LO https://idcos.oss-cn-hangzhou-internal.aliyuncs.com/ossutil64
-            chmod +x ossutil64
-            cat > /root/.ossutilconfig <<EOF
-        [Credentials]
-        language=EN
-        endpoint={{ oss_address }}
-        accessKeyID={{ oss_ak }}
-        accessKeySecret={{ oss_sk }}
-        EOF
-          fi
-
-        # 数据库备份
-          docker exec -t mysql bash -c "mysqldump -B -uroot -pYunjikeji#123 cloud_glide > /tmp/{{ cloudiac_env_id }}.sql" && docker cp mysql:/tmp/{{ cloudiac_env_id }}.sql .
-
-        # 打包上传
-          tar czvf {{ cloudiac_env_id }}.tgz {{ cloudiac_env_id }}.sql 
-          ./ossutil64 cp -f {{ cloudiac_env_id }}.tgz oss://cloudcmp/
-        else
-          echo "Env id {{ cloudiac_env_id }} not active,skip export."
-        fi
-      when: is_backup == "true"
+#    - name: export mysql data to oss
+#      shell: |
+#        # 活跃环境判断
+#        if [[ {{ cloudiac_env_status }} == "active" ]]; then
+#        # oss环境初始化
+#          if [[ ! -f ossutil64 ]]; then
+#            curl -LO https://idcos.oss-cn-hangzhou-internal.aliyuncs.com/ossutil64
+#            chmod +x ossutil64
+#            cat > /root/.ossutilconfig <<EOF
+#        [Credentials]
+#        language=EN
+#        endpoint={{ oss_address }}
+#        accessKeyID={{ oss_ak }}
+#        accessKeySecret={{ oss_sk }}
+#        EOF
+#          fi
+#
+#        # 数据库备份
+#          docker exec -t mysql bash -c "mysqldump -B -uroot -pYunjikeji#123 cloud_glide > /tmp/{{ cloudiac_env_id }}.sql" && docker cp mysql:/tmp/{{ cloudiac_env_id }}.sql .
+#
+#        # 打包上传
+#          tar czvf {{ cloudiac_env_id }}.tgz {{ cloudiac_env_id }}.sql
+#          ./ossutil64 cp -f {{ cloudiac_env_id }}.tgz oss://cloudcmp/
+#        else
+#          echo "Env id {{ cloudiac_env_id }} not active,skip export."
+#        fi
+#      when: is_backup == "true"
