@@ -100,9 +100,9 @@ resource "random_integer" "this" {
 }
 
 resource "tencentcloud_cbs_storage" "storage" {
-  availability_zone = module.networking.vswitches.private.zone_id
-  size    = "60"
-  category = "CLOUD_SSD"
+  availability_zone = var.zone_id
+  size    = 60
+  storage_type = "CLOUD_SSD"
   // 如果查询不到 snapshot，这里的 id 值是 null
   snapshot_id       = var.snapshot_id == "1" ? "" : var.snapshot_id
 }
