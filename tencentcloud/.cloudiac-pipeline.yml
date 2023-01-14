@@ -13,8 +13,7 @@ apply:
           jobs -l
           wait
           terraform refresh --input=false --var-file=/cloudiac/workspace/_cloudiac.tfvars.json 
-          terraform plan
-
+          bash ansible/plan.sh
     ansiblePlay:
       after:
         - |
