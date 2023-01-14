@@ -55,7 +55,7 @@ resource "tencentcloud_instance" "foo" {
   system_disk_type   = var.disk_type
   system_disk_size          = var.disk_size
   allocate_public_ip         = var.internet_bandwidth > 0 ? true : false
-
+  running_flag               = false
   data_disks {
     data_disk_type = "CLOUD_SSD"
     data_disk_size = 60
