@@ -47,17 +47,17 @@ output "env_id" {
 output "random_integer" {
   value = local.hash
 }
-//
-//output "storage" {
-//  value = tencentcloud_cbs_storage.storage.id
-//}
 
-output "disk" {
-  value =[
-  for index, instance in tencentcloud_instance.foo :
-  {
-   " disk_id" : tencentcloud_instance.foo[index].data_disks[0].data_disk_id
-  }
-  ]
-
+output "storage" {
+  value = tencentcloud_cbs_storage.storage.id
 }
+
+//output "disk" {
+//  value =[
+//  for index, instance in tencentcloud_instance.foo :
+//  {
+//   " disk_id" : tencentcloud_instance.foo[index].data_disks[0].data_disk_id
+//  }
+//  ]
+//
+//}
