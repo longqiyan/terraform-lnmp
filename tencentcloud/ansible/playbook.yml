@@ -1,4 +1,12 @@
 ---
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: Wait connection
+      wait_for_connection:
+        sleep: 5
+        timeout: "{{ wait_connection_timeout }}"
+
 - hosts: cloudlego
   gather_facts: true
   tasks:
