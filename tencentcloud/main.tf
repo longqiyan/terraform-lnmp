@@ -138,7 +138,7 @@ resource "tencentcloud_cbs_storage" "storage" {
   storage_name    =  "test"
   storage_type = "CLOUD_SSD"
   // 如果查询不到 snapshot，这里的 id 值是 null
-  snapshot_id       = var.snapshot_id == "1" ? (data.tencentcloud_cbs_snapshots.snapshots.id ==null ? "" : data.tencentcloud_cbs_snapshots.snapshots.id): var.snapshot_id
+  snapshot_id       =  data.tencentcloud_cbs_snapshots.snapshots.id
 }
 
 resource "tencentcloud_cbs_storage_attachment" "attachment" {
