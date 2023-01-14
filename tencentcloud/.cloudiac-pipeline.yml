@@ -12,7 +12,7 @@ apply:
           sleep 30 &
           jobs -l
           wait
-          terraform refresh 
+          terraform refresh --input=false 
           terraform plan -input=false -out=_cloudiac.tfplan \
           -var-file=v0.9.8_dev_ydd.tfvars -var-file=../../_cloudiac.tfvars.json \
           && \
