@@ -46,7 +46,7 @@
       register: dev_result
 
     - name: debugger
-      debugger: dev_result
+        debugger: dev_result
 
 #    - name: 取消旧数据挂载
 #      mount:
