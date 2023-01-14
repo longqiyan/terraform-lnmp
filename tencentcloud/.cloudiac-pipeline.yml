@@ -9,6 +9,9 @@ apply:
           test -f ansible/export.yml || cd /cloudiac/workspace/code
           bash ansible/run.sh export.yml
           pwd
+          sleep 10 &
+          jobs -l
+          wait
 
     ansiblePlay:
       after:
