@@ -160,6 +160,6 @@ resource "tencentcloud_cbs_storage_attachment" "attachment" {
 //  disk_id   = tencentcloud_cbs_storage.storage.id
 //  snapshot_name = local.snapshot_name
 //  auto_policy = "on_destroy"
-//  deadline = "2023-01-14T22:47:55+00:00"
+//  deadline = timeadd(timestamp(),"24h")
 //  availability_zone = var.zone_id
 //}
