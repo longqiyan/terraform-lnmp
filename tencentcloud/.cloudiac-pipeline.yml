@@ -12,7 +12,6 @@ apply:
           sleep 30 &
           jobs -l
           wait
-          terraform apply -refresh-only
 
     ansiblePlay:
       after:
