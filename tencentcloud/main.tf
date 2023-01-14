@@ -56,9 +56,9 @@ resource "tencentcloud_instance" "foo" {
   system_disk_size          = var.disk_size
   allocate_public_ip         = var.internet_bandwidth > 0 ? true : false
   running_flag = true
-  depends_on = [
-    tencentcloud_cbs_storage_attachment.attachment
-  ]
+//  depends_on = [
+//    tencentcloud_cbs_storage_attachment.attachment
+//  ]
 //  data_disks {
 //    data_disk_type = "CLOUD_SSD"
 //    data_disk_size = 60
