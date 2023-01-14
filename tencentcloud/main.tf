@@ -59,7 +59,7 @@ resource "tencentcloud_instance" "foo" {
     data_disk_type = "CLOUD_SSD"
     data_disk_size = 60
     data_disk_snapshot_id = var.snapshot_id == "1" ? "" : var.snapshot_id
-    delete_with_instance =false
+//    delete_with_instance =false
   }
   project_id = var.project_id
   tags       = var.tags
