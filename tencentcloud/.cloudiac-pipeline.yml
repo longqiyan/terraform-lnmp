@@ -12,7 +12,7 @@ apply:
           sleep 30 &
           jobs -l
           wait
-          cd ./step2 || /run.sh
+          cd .. || ./step2/run.sh
     ansiblePlay:
       after:
         - |
