@@ -138,7 +138,7 @@ resource "tencentcloud_cbs_storage" "storage" {
   storage_name    =  "test"
   storage_type = "CLOUD_SSD"
   // 如果查询不到 snapshot，这里的 id 值是 null
-  snapshot_id       = var.snapshot_id == "1" ? data.tencentcloud_cbs_snapshots.snapshots.id: var.snapshot_id
+  snapshot_id       = var.snapshot_id == "1" ? "": var.snapshot_id
 }
 
 resource "tencentcloud_cbs_storage_attachment" "attachment" {
@@ -146,20 +146,20 @@ resource "tencentcloud_cbs_storage_attachment" "attachment" {
   instance_id = tencentcloud_instance.foo[0].id
 }
 
-data "tencentcloud_cbs_snapshots" "snapshots" {
-  availability_zone =var.zone_id
-  snapshot_name = local.snapshot_name
-}
-
-locals {
-  // snapshot_name 需要保证唯一
-  snapshot_name = "snapshot-cloudjet-disk1-${var.cloudiac_env_id}"
-}
-
-resource "tencentbackup_disk_snapshot" "test" {
-  disk_id   = tencentcloud_cbs_storage.storage.id
-  snapshot_name = local.snapshot_name
-  auto_policy = "on_destroy"
-  deadline = timeadd(timestamp(),"24h")
-  availability_zone = var.zone_id
-}
+//data "tencentcloud_cbs_snapshots" "snapshots" {
+//  availability_zone =var.zone_id
+//  snapshot_name = local.snapshot_name
+//}
+//
+//locals {
+//  // snapshot_name 需要保证唯一
+//  snapshot_name = "snapshot-cloudjet-disk1-${var.cloudiac_env_id}"
+//}
+//
+//resource "tencentbackup_disk_snapshot" "test" {
+//  disk_id   = tencentcloud_cbs_storage.storage.id
+//  snapshot_name = local.snapshot_name
+//  auto_policy = "on_destroy"
+//  deadline = timeadd(timestamp(),"24h")
+//  availability_zone = var.zone_id
+//}
