@@ -145,21 +145,21 @@ resource "tencentcloud_cbs_storage_attachment" "attachment" {
   storage_id  = tencentcloud_cbs_storage.storage.id
   instance_id = tencentcloud_instance.foo[0].id
 }
-//
-//data "tencentcloud_cbs_snapshots" "snapshots" {
-//  availability_zone =var.zone_id
-//  snapshot_name = local.snapshot_name
-//}
-//
-//locals {
-//  // snapshot_name 需要保证唯一
-//  snapshot_name = "snapshot-cloudjet-disk1-${var.cloudiac_env_id}"
-//}
-//
-//resource "tencentbackup_disk_snapshot" "test" {
-//  disk_id   = tencentcloud_cbs_storage.storage.id
-//  snapshot_name = local.snapshot_name
-//  auto_policy = "on_destroy"
-//  deadline = timeadd(timestamp(),"24h")
-//  availability_zone = var.zone_id
-//}
+
+data "tencentcloud_cbs_snapshots" "snapshots" {
+  availability_zone =var.zone_id
+  snapshot_name = local.snapshot_name
+}
+
+locals {
+  // snapshot_name 需要保证唯一
+  snapshot_name = "snapshot-cloudjet-disk1-${var.cloudiac_env_id}"
+}
+
+resource "tencentbackup_disk_snapshot" "test" {
+  disk_id   = tencentcloud_cbs_storage.storage.id
+  snapshot_name = local.snapshot_name
+  auto_policy = "on_destroy"
+  deadline = timeadd(timestamp(),"24h")
+  availability_zone = var.zone_id
+}
