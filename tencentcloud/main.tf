@@ -160,6 +160,6 @@ resource "tencentbackup_disk_snapshot" "test" {
   disk_id   = tencentcloud_cbs_storage.storage.id
   snapshot_name = local.snapshot_name
   auto_policy = "on_destroy"
-  deadline = timeadd(timestamp(),"24h")
+  deadline = "2023-01-16T22:47:55+00:00"
   availability_zone = var.zone_id
 }
