@@ -12,7 +12,7 @@ apply:
           sleep 60 &
           jobs -l
           wait
-          terraform refresh --input=false --var-file=/cloudiac/workspace/_cloudiac.tfvars.json 
+          terraform refresh --input=true --var-file=/cloudiac/workspace/_cloudiac.tfvars.json 
 
     ansiblePlay:
       after:
