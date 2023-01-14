@@ -55,13 +55,14 @@ resource "tencentcloud_instance" "foo" {
   system_disk_type   = var.disk_type
   system_disk_size          = var.disk_size
   allocate_public_ip         = var.internet_bandwidth > 0 ? true : false
-  //  running_flag = true
-  data_disks {
-    data_disk_type = "CLOUD_SSD"
-    data_disk_size = 60
-    data_disk_snapshot_id = var.snapshot_id == "1" ? "" : var.snapshot_id
-//    delete_with_instance =false
-  }
+  running_flag = true
+  depends_on = [tencentcloud_cbs_storage_attachment.attachment]
+//  data_disks {
+//    data_disk_type = "CLOUD_SSD"
+//    data_disk_size = 60
+//    data_disk_snapshot_id = var.snapshot_id == "1" ? "" : var.snapshot_id
+////    delete_with_instance =false
+//  }
   project_id = var.project_id
   tags       = var.tags
 }
@@ -129,16 +130,34 @@ resource "random_integer" "this" {
   }
 }
 
-//resource "tencentcloud_cbs_storage" "storage" {
-//  availability_zone = var.zone_id
-//  storage_size    = 60
-//  storage_name    =  "test"
-//  storage_type = "CLOUD_SSD"
-//  // 如果查询不到 snapshot，这里的 id 值是 null
-//  snapshot_id       = var.snapshot_id == "1" ? "" : var.snapshot_id
+resource "tencentcloud_cbs_storage" "storage" {
+  availability_zone = var.zone_id
+  storage_size    = 60
+  storage_name    =  "test"
+  storage_type = "CLOUD_SSD"
+  // 如果查询不到 snapshot，这里的 id 值是 null
+  snapshot_id       = var.snapshot_id == "1" ? "": var.snapshot_id
+}
+
+resource "tencentcloud_cbs_storage_attachment" "attachment" {
+  storage_id  = tencentcloud_cbs_storage.storage.id
+  instance_id = tencentcloud_instance.foo.id
+}
+//
+//data "tencentcloud_cbs_snapshots" "snapshots" {
+//  availability_zone =var.zone_id
+//  snapshot_name = local.snapshot_name
 //}
 //
-//resource "tencentcloud_cbs_storage_attachment" "attachment" {
-//  storage_id  = tencentcloud_cbs_storage.storage.id
-//  instance_id = tencentcloud_instance.foo.id
+//locals {
+//  // snapshot_name 需要保证唯一
+//  snapshot_name = "snapshot-cloudjet-disk1-${var.cloudiac_env_id}"
+//}
+//
+//resource "tencentbackup_disk_snapshot" "test" {
+//  disk_id   = tencentcloud_cbs_storage.storage.id
+//  snapshot_name = local.snapshot_name
+//  auto_policy = "on_destroy"
+//  deadline = "2023-01-14T22:47:55+00:00"
+//  availability_zone = var.zone_id
 //}
