@@ -13,12 +13,12 @@ plan:
           jobs -l
           wait
 
-    ansiblePlay:
-      after:
-        - |
-          test -f ansible/import.yml || cd /cloudiac/workspace/code
-          bash ansible/run.sh import.yml
-          pwd
+#    ansiblePlay:
+#      after:
+#        - |
+#          test -f ansible/import.yml || cd /cloudiac/workspace/code
+#          bash ansible/run.sh import.yml
+#          pwd
 #apply:
 #  steps:
 #    terraformApply:
