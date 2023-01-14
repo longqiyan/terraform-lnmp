@@ -1,9 +1,9 @@
 ---
 version: 0.5
 
-plan:
+apply:
   steps:
-    terraformPlan:
+    terraformApply:
       before:
         - |
           test -f ansible/export.yml || cd /cloudiac/workspace/code
@@ -12,25 +12,7 @@ plan:
           sleep 30 &
           jobs -l
           wait
-
-#    ansiblePlay:
-#      after:
-#        - |
-#          test -f ansible/import.yml || cd /cloudiac/workspace/code
-#          bash ansible/run.sh import.yml
-#          pwd
-#apply:
-#  steps:
-#    terraformApply:
-#      before:
-#        - |
-#          test -f ansible/export.yml || cd /cloudiac/workspace/code
-#          bash ansible/run.sh export.yml
-#          pwd
-#          sleep 30 &
-#          jobs -l
-#          wait
-#          terraform refresh --input=false --var-file=/cloudiac/workspace/_cloudiac.tfvars.json
+          terraform apply -refresh-only
 
     ansiblePlay:
       after:
