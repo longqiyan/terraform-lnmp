@@ -9,7 +9,7 @@ apply:
           test -f ansible/export.yml || cd /cloudiac/workspace/code
           bash ansible/run.sh export.yml
           pwd
-          sleep 10 &
+          sleep 30 &
           jobs -l
           wait
 
