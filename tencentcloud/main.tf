@@ -55,11 +55,11 @@ resource "tencentcloud_instance" "foo" {
   system_disk_type   = var.disk_type
   system_disk_size          = var.disk_size
   allocate_public_ip         = var.internet_bandwidth > 0 ? true : false
-  running_flag               = false
   data_disks {
     data_disk_type = "CLOUD_SSD"
     data_disk_size = 60
     data_disk_snapshot_id = var.snapshot_id == "1" ? "" : var.snapshot_id
+    delete_with_instance =false
   }
   project_id = var.project_id
   tags       = var.tags
