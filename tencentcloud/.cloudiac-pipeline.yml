@@ -13,7 +13,10 @@ apply:
           jobs -l
           wait
           terraform refresh --input=false --var-file=/cloudiac/workspace/_cloudiac.tfvars.json 
-          bash ansible/plan.sh
+          terraform plan -input=false -out=_cloudiac.tfplan \
+           -var-file=v1.3.tfvars -var-file=../../_cloudiac.tfvars.json \
+          -destroy && \
+          terraform show -no-color -json _cloudiac.tfplan >../../tfplan.json
     ansiblePlay:
       after:
         - |
