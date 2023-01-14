@@ -14,7 +14,7 @@
 
     - name: Create a new primary partition
       parted:
-        device: /dev/vdb
+        device: /dev/vd*
         number: 1
         state: present
       when: "ansible_devices.vdb.partitions == {}"
@@ -41,68 +41,74 @@
       ignore_errors: yes
 
     # 追加逻辑操作
+    - name: 获取旧磁盘信息
+      shell: cat /etc/fstab
+      register: dev_result
 
-    - name: 取消旧数据挂载
-      mount:
-        src: "/dev/vdb1"
-        path: "/data"
-        fstype: ext4
-        state: absent
-      ignore_errors: yes
-      when: not vdb_result.stat.exists
+    - name: debugger
+      debug: dev_result
 
-    - name: 重新加载系统服务文件
-      systemd:
-        daemon_reload: yes
+#    - name: 取消旧数据挂载
+#      mount:
+#        src: "/dev/vdb1"
+#        path: "/data"
+#        fstype: ext4
+#        state: absent
+#      ignore_errors: yes
+#      when: not vdb_result.stat.exists
+#
+#    - name: 重新加载系统服务文件
+#      systemd:
+#        daemon_reload: yes
+#
+#    - name: 等待系统重启
+#      wait_for_connection:
+#        sleep: 30
+#        timeout: "{{ wait_connection_timeout }}"
 
-    - name: 等待系统重启
-      wait_for_connection:
-        sleep: 30
-        timeout: "{{ wait_connection_timeout }}"
-
-    - name: "Mount /dev/vdc1 to /data"
-      mount:
-        src: "/dev/vdc1"
-        path: "/data"
-        fstype: ext4
-        state: mounted
-      ignore_errors: yes
-      when: not vdb_result.stat.exists
+#    - name: "新据盘挂载"
+#      mount:
+#        src: "/dev/vdc1"
+#        path: "/data"
+#        fstype: ext4
+#        state: mounted
+#      ignore_errors: yes
+#      when: not vdb_result.stat.exists
 
     # 追加逻辑操作
 
-    - name: copy cloudlego docker-compose config
-      synchronize:
-        src: cloudlego-docker
-        dest: /opt/
-
-    - name: install docker
-      shell: |
-        test -f /opt/cloudlego-docker/docker-deploy.sh || curl -o /opt/cloudlego-docker/docker-deploy.sh https://idcos.oss-cn-hangzhou-internal.aliyuncs.com/docker-deploy.sh
-        bash /opt/cloudlego-docker/docker-deploy.sh
-
-    - name: docker login
-      shell: |
-        docker login --username=idcos --password=Yunjikeji#123 registry-vpc.cn-hangzhou.aliyuncs.com
-
-    - name: copy cloudlego docker-compose jinja config
-      template:
-        src: "{{ item.src }}"
-        dest: "{{ item.dest }}"
-        mode: "0644"
-      with_items:
-        - { src: cloudlego-docker/.env, dest: /opt/cloudlego-docker/.env }
-        - {
-            src: cloudlego-docker/cloudlego.yml,
-            dest: /opt/cloudlego-docker/cloudlego.yml,
-          }
-
-    - name: pull all images
-      shell: |
-        cd /opt/cloudlego-docker/
-        for i in cloudlego.yml database.yml middleware.yml;do docker-compose -f $i pull;done
-
-    - name: start app
-      shell: |
-        cd /opt/cloudlego-docker/
-        bash run.sh
+#    - name: copy cloudlego docker-compose config
+#      synchronize:
+#        src: cloudlego-docker
+#        dest: /opt/
+#
+#    - name: install docker
+#      shell: |
+#        test -f /opt/cloudlego-docker/docker-deploy.sh || curl -o /opt/cloudlego-docker/docker-deploy.sh https://idcos.oss-cn-hangzhou-internal.aliyuncs.com/docker-deploy.sh
+#        bash /opt/cloudlego-docker/docker-deploy.sh
+#
+#    - name: docker login
+#      shell: |
+#        docker login --username=idcos --password=Yunjikeji#123 registry-vpc.cn-hangzhou.aliyuncs.com
+#
+#    - name: copy cloudlego docker-compose jinja config
+#      template:
+#        src: "{{ item.src }}"
+#        dest: "{{ item.dest }}"
+#        mode: "0644"
+#      with_items:
+#        - { src: cloudlego-docker/.env, dest: /opt/cloudlego-docker/.env }
+#        - {
+#            src: cloudlego-docker/cloudlego.yml,
+#            dest: /opt/cloudlego-docker/cloudlego.yml,
+#          }
+#
+#    - name: pull all images
+#      shell: |
+#        cd /opt/cloudlego-docker/
+#        for i in cloudlego.yml database.yml middleware.yml;do docker-compose -f $i pull;done
+#
+#    - name: start app
+#      shell: |
+#        cd /opt/cloudlego-docker/
+#        bash run.sh
