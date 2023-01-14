@@ -55,6 +55,7 @@ resource "tencentcloud_instance" "foo" {
   system_disk_type   = var.disk_type
   system_disk_size          = var.disk_size
   allocate_public_ip         = var.internet_bandwidth > 0 ? true : false
+  //  running_flag = true
   data_disks {
     data_disk_type = "CLOUD_SSD"
     data_disk_size = 60
@@ -131,7 +132,6 @@ resource "random_integer" "this" {
 //resource "tencentcloud_cbs_storage" "storage" {
 //  availability_zone = var.zone_id
 //  storage_size    = 60
-//  force_delete   =true
 //  storage_name    =  "test"
 //  storage_type = "CLOUD_SSD"
 //  // 如果查询不到 snapshot，这里的 id 值是 null
@@ -140,5 +140,5 @@ resource "random_integer" "this" {
 //
 //resource "tencentcloud_cbs_storage_attachment" "attachment" {
 //  storage_id  = tencentcloud_cbs_storage.storage.id
-//  instance_id = module.instance[0].instance.instance_id
+//  instance_id = tencentcloud_instance.foo.id
 //}
