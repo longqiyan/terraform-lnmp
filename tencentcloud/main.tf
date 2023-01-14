@@ -143,7 +143,7 @@ resource "tencentcloud_cbs_storage" "storage" {
 
 resource "tencentcloud_cbs_storage_attachment" "attachment" {
   storage_id  = tencentcloud_cbs_storage.storage.id
-  instance_id = tencentcloud_instance.foo.id
+  instance_id = tencentcloud_instance.foo[0].id
 }
 //
 //data "tencentcloud_cbs_snapshots" "snapshots" {
