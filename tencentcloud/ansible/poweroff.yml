@@ -10,6 +10,7 @@
 
     - name: 实例关机
       shell: poweroff
+      ignore_errors: yes
 
     - name: Refresh terraform state
       delegate_to: localhost
