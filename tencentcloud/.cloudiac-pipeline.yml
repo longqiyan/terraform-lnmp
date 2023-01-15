@@ -6,18 +6,12 @@ apply:
     terraformApply:
       before:
         - |
-          test -f ansible/export.yml || cd /cloudiac/workspace/code
-          bash ansible/run.sh export.yml
+          bash ansible/run.sh poweroff.yml
           pwd
-          sleep 30 &
-          jobs -l
-          wait
-          cd .. || ./step2/run.sh
+
     ansiblePlay:
       after:
         - |
-          test -f ansible/import.yml || cd /cloudiac/workspace/code
-          bash ansible/run.sh import.yml
           pwd
 
 destroy:
@@ -25,6 +19,4 @@ destroy:
     terraformDestroy:
       before:
         - |
-          test -f ansible/export.yml || cd /cloudiac/workspace/code
-          bash ansible/run.sh export.yml
           pwd
