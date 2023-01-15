@@ -2,20 +2,20 @@
 variable "account_id" {
   type        = string
   description = " 账号ID"
-  default = "idcos_tx"
+  default     = "idcos_tx"
 }
 variable "instance_number" {
   description = " 虚机个数"
-  default = 1
+  default     = 1
 }
 variable "zone_id" {
   type        = string
   description = "可用区 id"
-  default = "ap-guangzhou-3"
+  default     = "ap-guangzhou-3"
 }
 variable "instance_type" {
   description = "实例类型"
-  default = "S5.MEDIUM4"
+  default     = "S5.MEDIUM4"
 }
 variable "instance_name" {
   type        = string
@@ -34,24 +34,14 @@ variable "hostname" {
 variable "disk_type" {
   type        = string
   description = "系统磁盘类型，可选: CLOUD_PREMIUM,CLOUD_SSD,CLOUD_HSSD"
-  default     = "CLOUD_PREMIUM"
+  default     = "CLOUD_SSD"
 }
 variable "disk_size" {
   type        = number
   description = "系统磁盘大小, 可选范围  50~1000(G)"
-  default     = 50
+  default     = 60
 }
-variable "data_disks" {
-  type        = map(any)
-  default     = {
-//    "d0" = {
-//      storage_name = "data-disk0"
-//      storage_type = "CLOUD_SSD"
-//      storage_size = "60"
-//    }
-  }
-  description = "数据盘列表"
-}
+
 variable "internet_bandwidth" {
   type        = number
   description = "公网带宽"
@@ -74,7 +64,7 @@ variable "project_id" {
 variable "tags" {
   type        = map(string)
   description = "标签"
-  default     = {
+  default = {
     Application = "Cloudjet"
     Owner       = null
     Environment = null
@@ -162,12 +152,12 @@ variable "mysql_password" {
 
 variable "enable_backup" {
   description = "是否开启数据备份恢复"
-  default = "false"
+  default     = "false"
 }
 
 variable "max_heap" {
   description = "JET-API服务的最大堆"
-  default = "2g"
+  default     = "2g"
 }
 
 variable "cloudiac_env_id" {

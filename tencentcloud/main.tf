@@ -44,7 +44,7 @@ resource "tencentcloud_instance" "foo" {
   subnet_id         = module.networking.subnets.public.subnet_id
   security_groups   = [module.networking.security_groups.public.security_group_id]
   key_ids           = [module.account.kye_pair.key_id]
-  instance_type     = var.instance_type
+  instance_type     = var.instance_type == "4c8g" ? "S5.LARGE8" : var.instance_type == "8c16g" ? "S5.2XLARGE16" : "S5.LARGE8"
   instance_name     = var.instance_name
   //  key_ids       = [module.account.kye_pair.key_id]
   private_ip                 = var.private_ip
@@ -134,9 +134,9 @@ resource "random_integer" "this" {
 
 resource "tencentcloud_cbs_storage" "storage" {
   availability_zone = var.zone_id
-  storage_size      = 60
+  storage_size      = var.disk_size
   storage_name      = "test"
-  storage_type      = "CLOUD_SSD"
+  storage_type      = var.disk_type
   // 如果查询不到 snapshot，这里的 id 值是 null
   snapshot_id = var.snapshot_id == "1" ? (data.tencentcloud_cbs_snapshots.snapshots.id == "0" ? null : data.tencentcloud_cbs_snapshots.snapshots.snapshot_list[0].snapshot_id) : var.snapshot_id
   lifecycle {
