@@ -34,9 +34,20 @@ variable "hostname" {
 variable "disk_type" {
   type        = string
   description = "系统磁盘类型，可选: CLOUD_PREMIUM,CLOUD_SSD,CLOUD_HSSD"
-  default     = "CLOUD_SSD"
+  default     = "CLOUD_PREMIUM"
 }
 variable "disk_size" {
+  type        = number
+  description = "系统磁盘大小, 可选范围  50~1000(G)"
+  default     = 50
+}
+
+variable "data_disk_type" {
+  type        = string
+  description = "系统磁盘类型，可选: CLOUD_PREMIUM,CLOUD_SSD,CLOUD_HSSD"
+  default     = "CLOUD_SSD"
+}
+variable "data_disk_size" {
   type        = number
   description = "系统磁盘大小, 可选范围  50~1000(G)"
   default     = 60

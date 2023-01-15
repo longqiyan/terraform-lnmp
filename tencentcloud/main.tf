@@ -134,9 +134,9 @@ resource "random_integer" "this" {
 
 resource "tencentcloud_cbs_storage" "storage" {
   availability_zone = var.zone_id
-  storage_size      = var.disk_size
+  storage_size      = var.data_disk_size
   storage_name      = "test"
-  storage_type      = var.disk_type
+  storage_type      = var.data_disk_type
   // 如果查询不到 snapshot，这里的 id 值是 null
   snapshot_id = var.snapshot_id == "1" ? (data.tencentcloud_cbs_snapshots.snapshots.id == "0" ? null : data.tencentcloud_cbs_snapshots.snapshots.snapshot_list[0].snapshot_id) : var.snapshot_id
   lifecycle {
