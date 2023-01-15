@@ -159,7 +159,7 @@ locals {
 
 resource "tencentbackup_disk_snapshot" "test" {
   disk_id   = tencentcloud_cbs_storage.storage.id
-  snapshot_name = "snap_name2"
+  snapshot_name = local.snapshot_name
   auto_policy = "on_destroy"
   deadline = var.deadline
   availability_zone = "ap-guangzhou-3"
