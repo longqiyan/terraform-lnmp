@@ -12,10 +12,10 @@ terraform {
       source  = "hashicorp/random"
       version = "3.4.3"
     }
-    null = {
-      source  = "hashicorp/null"
-      version = "3.2.1"
-    }
+    //    null = {
+    //      source  = "hashicorp/null"
+    //      version = "3.2.1"
+    //    }
     tencentbackup = {
       source  = "store.cloudiac.org/idcos/tencentbackup"
       version = "1.0.4"
