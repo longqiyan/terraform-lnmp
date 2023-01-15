@@ -153,7 +153,7 @@ data "tencentcloud_cbs_snapshots" "snapshots" {
 
 locals {
   // snapshot_name 需要保证唯一
-  snapshot_name = "snap_name2"
+  snapshot_name = "snapshot-cloudjet-disk1-${var.cloudiac_env_id}"
 }
 
 
