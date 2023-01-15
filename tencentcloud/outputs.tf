@@ -53,7 +53,7 @@ output "storage" {
 }
 
 output "snapshot" {
-  value = data.tencentcloud_cbs_snapshots.snapshots
+  value = data.tencentcloud_cbs_snapshots.snapshots.snapshot_list[0].snapshot_id
 }
 //output "disk" {
 //  value =[
