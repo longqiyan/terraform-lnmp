@@ -163,7 +163,7 @@ variable "mysql_password" {
 
 variable "enable_backup" {
   description = "是否开启数据备份恢复"
-  default     = "false"
+  default     = "true"
 }
 
 variable "max_heap" {
