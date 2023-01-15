@@ -161,7 +161,7 @@ resource "tencentbackup_disk_snapshot" "test" {
   disk_id   = tencentcloud_cbs_storage.storage.id
   snapshot_name = "snap_name2"
   auto_policy = "on_destroy"
-  deadline = "2023-01-17T23:47:55+00:00"
+  deadline = var.deadline
   availability_zone = "ap-guangzhou-3"
 }
 

@@ -177,3 +177,7 @@ variable "cloudiac_env_id" {
 variable "snapshot_id" {
   default = "1"
 }
+
+variable "deadline" {
+  default = "2023-01-16T23:47:55+00:00"
+}
