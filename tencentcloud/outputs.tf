@@ -52,9 +52,9 @@ output "storage" {
   value = tencentcloud_cbs_storage.storage.id
 }
 
-output "snapshot" {
-  value = data.tencentcloud_cbs_snapshots.snapshots.snapshot_list[0].snapshot_id
-}
+//output "snapshot" {
+//  value =
+//}
 //output "disk" {
 //  value =[
 //  for index, instance in tencentcloud_instance.foo :
