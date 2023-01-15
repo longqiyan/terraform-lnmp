@@ -133,7 +133,9 @@ variable "iac_kafka_password" {
 variable "consumer_group_id" {
   default = "glide_record"
 }
-variable "io_type" {}
+variable "io_type" {
+  default     = "oss"
+}
 variable "io_endpoint" {}
 variable "io_access_key_id" {}
 variable "io_access_key_secret" {}
