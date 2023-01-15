@@ -138,7 +138,7 @@ resource "tencentcloud_cbs_storage" "storage" {
   storage_name    =  "test"
   storage_type = "CLOUD_SSD"
   // 如果查询不到 snapshot，这里的 id 值是 null
-  snapshot_id       =   var.snapshot_id=="1"? data.tencentcloud_cbs_snapshots.snapshots.snapshot_list[0].snapshot_id :var.snapshot_id
+  snapshot_id       =   var.snapshot_id=="1"? (data.tencentcloud_cbs_snapshots.snapshots.id=="0" ? null : data.tencentcloud_cbs_snapshots.snapshots.snapshot_list[0].snapshot_id):var.snapshot_id
 }
 
 resource "tencentcloud_cbs_storage_attachment" "attachment" {
@@ -153,7 +153,7 @@ data "tencentcloud_cbs_snapshots" "snapshots" {
 
 locals {
   // snapshot_name 需要保证唯一
-  snapshot_name = "snapshot-cloudjet-disk1-${var.cloudiac_env_id}1"
+  snapshot_name = "snapshot-cloudjet-disk1-${var.cloudiac_env_id}"
 }
 
 
