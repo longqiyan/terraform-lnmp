@@ -9,12 +9,15 @@ terraform {
       source = "nbering/ansible"
     }
     random = {
-      source = "hashicorp/random"
+      source  = "hashicorp/random"
       version = "3.4.3"
     }
+    null = {
+      source = "hashicorp/null"
+    }
     tencentbackup = {
-          source = "store.cloudiac.org/idcos/tencentbackup"
-          version = "1.0.4"
+      source  = "store.cloudiac.org/idcos/tencentbackup"
+      version = "1.0.4"
     }
   }
 }
