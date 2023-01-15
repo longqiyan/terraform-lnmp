@@ -42,7 +42,7 @@ resource "alicloud_instance" "instance" {
   count                = var.instance_number
   availability_zone    = module.networking.vswitches.private.zone_id
   security_groups      = [module.networking.security_groups.private.id]
-  instance_type        = var.instance_type == "4c8g" ? "ecs.c6.xlarge" : var.instance_type == "8c16g" ? "ecs.c5.2xlarge" : "4c8g"
+  instance_type        = var.instance_type == "4c8g" ? "ecs.c6.xlarge" : var.instance_type == "8c16g" ? "ecs.c5.2xlarge" : "ecs.c6.xlarge"
   spot_strategy        = var.create_spot_instance ? "SpotAsPriceGo" : "NoSpot"
   spot_price_limit     = 0
   system_disk_category = "cloud_efficiency"
