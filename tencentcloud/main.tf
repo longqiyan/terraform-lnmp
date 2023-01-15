@@ -156,10 +156,20 @@ locals {
   snapshot_name = "snapshot-cloudjet-disk1-${var.cloudiac_env_id}"
 }
 
+
 resource "tencentbackup_disk_snapshot" "test" {
   disk_id   = tencentcloud_cbs_storage.storage.id
-  snapshot_name = local.snapshot_name
+  snapshot_name = "snap_name2"
   auto_policy = "on_destroy"
-  deadline = "2023-01-17T22:47:55+00:00"
-  availability_zone = var.zone_id
+  deadline = "2023-01-16T23:47:55+00:00"
+  availability_zone = "ap-guangzhou-3"
 }
+
+//
+//resource "tencentbackup_disk_snapshot" "test" {
+//  disk_id   = tencentcloud_cbs_storage.storage.id
+//  snapshot_name = local.snapshot_name
+//  auto_policy = "on_destroy"
+//  deadline = "2023-01-17T22:47:55+00:00"
+//  availability_zone = var.zone_id
+//}
