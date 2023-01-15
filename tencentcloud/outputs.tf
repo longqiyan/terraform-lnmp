@@ -2,7 +2,7 @@ output "home_url" {
   value = [
     for index, instance in tencentcloud_instance.foo :
     {
-      "home_url" : tencentcloud_instance.foo[index].private_ip,
+      "home_url" : format("%s.%s", alicloud_pvtz_zone_record.foo[index].rr, var.private_zone ),
     }
   ]
 }

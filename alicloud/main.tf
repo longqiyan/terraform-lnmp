@@ -132,9 +132,9 @@ locals {
 }
 
 resource "alicloud_pvtz_zone_record" "foo" {
-  count   = var.private_zone_domain == "" ? 0 : var.instance_number
+  count   = 1
   zone_id = data.alicloud_pvtz_zones.pvtz_zones_ds.zones.0.id
-  rr      = var.instance_number > 1 ? "${var.private_zone_domain}${count.index}${local.hash}" : "${var.private_zone_domain}${local.hash}"
+  rr      = "jet-demo"
   type    = "A"
   value   = alicloud_instance.instance[count.index].private_ip
   ttl     = 60
