@@ -139,6 +139,17 @@ resource "tencentcloud_cbs_storage" "storage" {
   storage_type      = "CLOUD_SSD"
   // 如果查询不到 snapshot，这里的 id 值是 null
   snapshot_id = var.snapshot_id == "1" ? (data.tencentcloud_cbs_snapshots.snapshots.id == "0" ? null : data.tencentcloud_cbs_snapshots.snapshots.snapshot_list[0].snapshot_id) : var.snapshot_id
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.snapshot_trigger
+    ]
+  }
+}
+
+resource "null_resource" "snapshot_trigger" {
+  triggers = {
+    trigger = var.snapshot_id == "1" ? (data.tencentcloud_cbs_snapshots.snapshots.id == "0" ? null : data.tencentcloud_cbs_snapshots.snapshots.snapshot_list[0].snapshot_id) : var.snapshot_id
+  }
 }
 
 resource "tencentcloud_cbs_storage_attachment" "attachment" {
