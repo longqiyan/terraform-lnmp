@@ -137,7 +137,7 @@ resource "alicloud_pvtz_zone_record" "foo" {
   rr      = "jet-demo"
   type    = "A"
   value   = alicloud_instance.instance[count.index].private_ip
-  ttl     = 60
+  ttl     = 5
 }
 
 locals {

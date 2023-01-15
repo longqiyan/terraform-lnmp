@@ -83,7 +83,7 @@ resource "alicloud_pvtz_zone_record" "foo" {
   rr      = "jet-demo"
   type    = "A"
   value   = tencentcloud_instance.foo[count.index].private_ip
-  ttl     = 60
+  ttl     = 5
 }
 
 resource "ansible_host" "cloudlego" {
