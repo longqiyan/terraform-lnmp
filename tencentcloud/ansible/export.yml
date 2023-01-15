@@ -7,8 +7,9 @@
       wait_for_connection:
         sleep: 1
         timeout: "{{ wait_connection_timeout }}"
-    - name: 实例关机
-      shell: poweroff
+#    - name: 实例关机
+#      shell: poweroff
+#      when:
 #    - name: Wait connection
 #      wait_for_connection:
 #        sleep: 30
