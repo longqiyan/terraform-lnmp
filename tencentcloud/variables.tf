@@ -184,3 +184,7 @@ variable "snapshot_id" {
 variable "retention_days" {
   default = "3"
 }
+
+variable "private_zone" {
+  default = "yun.idcos"
+}

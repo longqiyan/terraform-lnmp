@@ -73,6 +73,19 @@ locals {
   hash = substr(parseint(sha1(var.cloudiac_env_id), 16), 0, 6)
 }
 
+data "alicloud_pvtz_zones" "pvtz_zones_ds" {
+  keyword = var.private_zone
+}
+
+resource "alicloud_pvtz_zone_record" "foo" {
+  count   = 1
+  zone_id = data.alicloud_pvtz_zones.pvtz_zones_ds.zones.0.id
+  rr      = "jet-demo"
+  type    = "A"
+  value   = tencentcloud_instance.foo[count.index].private_ip
+  ttl     = 60
+}
+
 resource "ansible_host" "cloudlego" {
   count = var.instance_number
   //inventory_hostname = var.internet_bandwidth >= 1 ? module.instance[count.index].instance.public_ip : module.instance[count.index].instance.private_ip
