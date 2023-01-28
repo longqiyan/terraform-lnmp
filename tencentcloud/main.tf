@@ -78,9 +78,9 @@ data "alicloud_pvtz_zones" "pvtz_zones_ds" {
 }
 
 resource "alicloud_pvtz_zone_record" "foo" {
-  count   = 1
+  count   = var.private_zone_domain == "" ? 0 : var.instance_number
   zone_id = data.alicloud_pvtz_zones.pvtz_zones_ds.zones.0.id
-  rr      = "jet-demo"
+  rr      = var.instance_number > 1 ? "${var.private_zone_domain}${count.index}${local.hash}" : "${var.private_zone_domain}${local.hash}"
   type    = "A"
   value   = tencentcloud_instance.foo[count.index].private_ip
   ttl     = 5
