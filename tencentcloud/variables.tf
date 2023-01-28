@@ -188,3 +188,4 @@ variable "retention_days" {
 variable "private_zone" {
   default = "yun.idcos"
 }
+variable "private_zone_domain" {}
