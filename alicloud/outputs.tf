@@ -47,3 +47,7 @@ output "env_id" {
 output "random_integer" {
   value = local.hash
 }
+
+output "disk_id" {
+  value = alicloud_ecs_disk.test_disk.id
+}

@@ -39,23 +39,23 @@ module "networking" {
 #  name_regex = var.key_name
 #}
 resource "alicloud_instance" "instance" {
-  count                      = var.instance_number
-  availability_zone          = module.networking.vswitches.private.zone_id
-  security_groups            = [module.networking.security_groups.private.id]
-  instance_type              = var.instance_type
-  spot_strategy              = var.create_spot_instance ? "SpotAsPriceGo" : "NoSpot"
-  spot_price_limit           = 0
-  system_disk_category       = "cloud_efficiency"
-  system_disk_size           = var.disk_size
-  image_id                   = var.image_id
-  instance_name              = var.instance_name
-  vswitch_id                 = module.networking.vswitches.private.vswitch_id
+  count                = var.instance_number
+  availability_zone    = module.networking.vswitches.private.zone_id
+  security_groups      = [module.networking.security_groups.private.id]
+  instance_type        = var.instance_type == "4c8g" ? "ecs.c6.xlarge" : var.instance_type == "8c16g" ? "ecs.c5.2xlarge" : "ecs.c6.xlarge"
+  spot_strategy        = var.create_spot_instance ? "SpotAsPriceGo" : "NoSpot"
+  spot_price_limit     = 0
+  system_disk_category = "cloud_efficiency"
+  system_disk_size     = var.disk_size
+  image_id             = var.image_id
+  instance_name        = var.instance_name
+  vswitch_id           = module.networking.vswitches.private.vswitch_id
   # 设置带宽大于1， 则自动分配公网IP
   internet_max_bandwidth_out = var.bandwidth_out
   key_name                   = module.account.key_pair.id
   resource_group_id          = module.networking.resource_group.id
   private_ip                 = length(var.private_ip) > 0 ? var.private_ip : ""
-  tags                       = {
+  tags = {
     application = var.tags_application
     owner       = var.tags_owner
   }
@@ -107,7 +107,7 @@ resource "ansible_host" "cloudlego" {
     mysql_user     = var.mysql_user
     mysql_password = var.mysql_password
 
-    enable_backup  = var.enable_backup
+    enable_backup = var.enable_backup
 
     //最大堆
     max_heap = var.max_heap
@@ -115,8 +115,8 @@ resource "ansible_host" "cloudlego" {
 }
 
 resource "random_integer" "this" {
-  min     = 100000
-  max     = 999999
+  min = 100000
+  max = 999999
   keepers = {
     # Generate a new id each time we switch to a new AMI id
     listener_arn = "idcos-jet"
@@ -132,12 +132,12 @@ locals {
 }
 
 resource "alicloud_pvtz_zone_record" "foo" {
-  count   = var.private_zone_domain == "" ? 0 : var.instance_number
+  count   = 1
   zone_id = data.alicloud_pvtz_zones.pvtz_zones_ds.zones.0.id
-  rr      = var.instance_number > 1 ? "${var.private_zone_domain}${count.index}${local.hash}" : "${var.private_zone_domain}${local.hash}"
+  rr      = "jet-demo"
   type    = "A"
   value   = alicloud_instance.instance[count.index].private_ip
-  ttl     = 60
+  ttl     = 5
 }
 
 locals {
@@ -149,17 +149,17 @@ data "ydd_disk_snapshot_alicloud" "ss" {
   disk_number = 1
   // 这里只传入一个 snapshot name, 查询快照时自动添加序号后缀组成完整名称，
   // 如 "snapshot-appname-disk1-xxxx-001"
-  snapshot_name = local.snapshot_name
-  resource_group_id    = module.networking.resource_group.id
+  snapshot_name     = local.snapshot_name
+  resource_group_id = module.networking.resource_group.id
 }
 
 resource "alicloud_ecs_disk" "test_disk" {
-  zone_id = module.networking.vswitches.private.zone_id
-  size    = "60"
+  zone_id  = module.networking.vswitches.private.zone_id
+  size     = "60"
   category = "cloud_essd"
   // 如果查询不到 snapshot，这里的 id 值是 null
-  snapshot_id       = data.ydd_disk_snapshot_alicloud.ss.snapshots[0].id
-  resource_group_id    = module.networking.resource_group.id
+  snapshot_id       = var.enable_backup ? (var.snapshot_id == "1" ? data.ydd_disk_snapshot_alicloud.ss.snapshots[0].id : var.snapshot_id) : ""
+  resource_group_id = module.networking.resource_group.id
 }
 
 resource "alicloud_ecs_disk_attachment" "test_disk_att" {
@@ -168,8 +168,8 @@ resource "alicloud_ecs_disk_attachment" "test_disk_att" {
 }
 
 resource "ydd_disk_snapshot_alicloud" "test_disk_snapshot" {
-  disk_ids = [alicloud_ecs_disk.test_disk.id]
-  resource_group_id    = module.networking.resource_group.id
+  disk_ids          = [alicloud_ecs_disk.test_disk.id]
+  resource_group_id = module.networking.resource_group.id
 
   // 这里只传入一个 snapshot name, 创建快照时自动按序号添加后缀，
   // 如 "snapshot-appname-disk1-xxxx-001"

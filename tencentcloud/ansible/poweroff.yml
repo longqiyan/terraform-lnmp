@@ -1,0 +1,18 @@
+---
+- hosts: cloudlego
+  gather_facts: true
+  tasks:
+    - name: Wait connection
+      ## 每秒尝试进行一次连接直到连接成功或者超时
+      wait_for_connection:
+        sleep: 1
+        timeout: "{{ wait_connection_timeout }}"
+
+    - name: 实例关机
+      shell: poweroff
+      ignore_errors: yes
+      ignore_unreachable: true
+
+    - name: Refresh terraform state
+      delegate_to: localhost
+      shell: sleep 30 && cd /cloudiac/workspace && ./step2/run.sh

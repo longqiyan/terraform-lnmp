@@ -21,8 +21,8 @@ variable "app_name" {
 }
 
 variable "instance_type" {
-  default     = "ecs.c6.large"
-  # default     = "ecs.c6.xlarge"
+  #default     = "ecs.c6.large"
+   default     = "ecs.c6.xlarge"
   description = "创建ecs服务器实例规格"
 }
 
@@ -119,7 +119,9 @@ variable "is_backup" {
 #}
 #variable "security_group_id" {}
 
-variable "iac_kafka_host" {}
+variable "iac_kafka_host" {
+  default=""
+}
 
 variable "iac_kafka_user" {
   default = "admin"
@@ -131,7 +133,9 @@ variable "iac_kafka_password" {
 variable "consumer_group_id" {
   default = "glide_record"
 }
-variable "io_type" {}
+variable "io_type" {
+  default     = "oss"
+}
 variable "io_endpoint" {}
 variable "io_access_key_id" {}
 variable "io_access_key_secret" {}
@@ -141,7 +145,7 @@ variable "mysql_db" {
   default = "cloud_glide"
 }
 variable "mysql_user" {
-  default = "admin"
+  default = "root"
 }
 variable "mysql_password" {
   default = "Yunjikeji#123"
@@ -165,10 +169,14 @@ variable "snapshot_retention_days" {
 
 variable "enable_backup" {
   description = "是否开启数据备份恢复"
-  default = "false"
+  default = "true"
 }
 
 variable "max_heap" {
   description = "JET-API服务的最大堆"
   default = "2g"
+}
+
+variable "snapshot_id" {
+  default = "1"
 }

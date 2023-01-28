@@ -1,0 +1,85 @@
+---
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: Wait connection
+      wait_for_connection:
+        sleep: 5
+        timeout: "{{ wait_connection_timeout }}"
+
+- hosts: cloudlego
+  gather_facts: true
+  tasks:
+    - name: Wait connection
+      wait_for_connection:
+        sleep: 1
+        timeout: "{{ wait_connection_timeout }}"
+
+    - name: 恢复时判断/dev/vdb是否存在
+      stat:
+        path: /dev/vdb
+      register: vdb_result
+
+    - name: Create a new primary partition
+      parted:
+        device: /dev/vdb
+        number: 1
+        state: present
+      when: "ansible_devices.vdb.partitions == {}"
+      ignore_errors: yes
+
+    - name: Format disk
+      filesystem:
+        dev: /dev/vdb1
+        fstype: ext4
+      when: "ansible_devices.vdb.partitions == {}"
+      ignore_errors: yes
+
+    - name: create data dir
+      file:
+        path: /data
+        state: directory
+
+    - name: Mount file system
+      mount:
+        fstype: ext4
+        src: /dev/vdb1
+        path: /data
+        state: mounted
+      ignore_errors: yes
+
+    - name: copy cloudlego docker-compose config
+      synchronize:
+        src: cloudlego-docker
+        dest: /opt/
+
+    - name: install docker
+      shell: |
+        test -f /opt/cloudlego-docker/docker-deploy.sh || curl -o /opt/cloudlego-docker/docker-deploy.sh https://idcos.com/opensource/docker-deploy.sh
+        bash /opt/cloudlego-docker/docker-deploy.sh
+
+    - name: docker login
+      shell: |
+        docker login --username=idcos --password=Yunjikeji#123 registry.cn-hangzhou.aliyuncs.com
+
+    - name: copy cloudlego docker-compose jinja config
+      template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        mode: "0644"
+      with_items:
+        - { src: cloudlego-docker/.env, dest: /opt/cloudlego-docker/.env }
+        - {
+            src: cloudlego-docker/cloudlego.yml,
+            dest: /opt/cloudlego-docker/cloudlego.yml,
+          }
+
+    - name: pull all images
+      shell: |
+        cd /opt/cloudlego-docker/
+        for i in cloudlego.yml database.yml middleware.yml;do docker-compose -f $i pull;done
+
+    - name: start app
+      shell: |
+        cd /opt/cloudlego-docker/
+        bash run.sh

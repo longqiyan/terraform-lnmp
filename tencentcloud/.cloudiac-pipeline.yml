@@ -1,0 +1,22 @@
+---
+version: 0.5
+
+apply:
+  steps:
+    terraformApply:
+      before:
+        - |
+          bash ansible/run.sh poweroff.yml
+          pwd
+
+    ansiblePlay:
+      after:
+        - |
+          pwd
+
+destroy:
+  steps:
+    terraformDestroy:
+      before:
+        - |
+          pwd

@@ -7,19 +7,21 @@
         sleep: 1
         timeout: "{{ wait_connection_timeout }}"
 
+    - name: 获取新磁盘信息
+      shell: lsblk -l |egrep "^v" |grep -v "$(lsblk |grep -v NAME |awk 'NR==1{print $1}')" |awk 'NR==1{print $1}'
+      register: new_dev
+
     - name: Create a new primary partition
       parted:
-        device: /dev/vdb
+        device: "/dev/{{new_dev.stdout}}"
         number: 1
         state: present
-      when: "ansible_devices.vdb.partitions == {}"
       ignore_errors: yes
 
     - name: Format disk
       filesystem:
-        dev: /dev/vdb1
+        dev: "/dev/{{new_dev.stdout}}1"
         fstype: ext4
-      when: "ansible_devices.vdb.partitions == {}"
       ignore_errors: yes
 
     - name: create data dir
@@ -30,10 +32,42 @@
     - name: Mount file system
       mount:
         fstype: ext4
-        src: /dev/vdb1
+        src: "/dev/{{new_dev.stdout}}1"
         path: /data
         state: mounted
       ignore_errors: yes
+
+    # 追加逻辑操作
+    - name: 获取旧磁盘信息
+      shell: cat /etc/fstab |grep /data |awk '{print $1}'
+      register: dev_result
+
+    - name: 取消旧数据挂载
+      mount:
+        src: "{{dev_result.stdout}}1"
+        path: "/data"
+        fstype: ext4
+        state: absent
+      ignore_errors: yes
+
+    - name: 重新加载系统服务文件
+      systemd:
+        daemon_reload: yes
+
+    - name: 等待系统重启
+      wait_for_connection:
+        sleep: 30
+        timeout: "{{ wait_connection_timeout }}"
+
+    - name: "新据盘挂载"
+      mount:
+        src: "/dev/{{new_dev.stdout}}1"
+        path: "/data"
+        fstype: ext4
+        state: mounted
+      ignore_errors: yes
+
+    # 追加逻辑操作
 
     - name: copy cloudlego docker-compose config
       synchronize:
