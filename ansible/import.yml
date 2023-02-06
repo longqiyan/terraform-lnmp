@@ -1,0 +1,45 @@
+---
+- hosts: cloudlego
+  gather_facts: true
+  tasks:
+    - name: Wait connection
+      ## 每秒尝试进行一次连接直到连接成功或者超时
+      wait_for_connection:
+        sleep: 1
+        timeout: "{{ wait_connection_timeout }}"
+    - name: import mysql data from oss
+      shell: |
+        echo "{{ cloudiac_env_status }} Start."
+        sleep 30s
+        # 环境状态判断，异常状态不备份
+        if [[ ( {{ cloudiac_env_status }} == inactive ) || ( {{ cloudiac_env_status }} == destroyed ) || ( {{ cloudiac_env_status }} == failed ) ]]; then
+        # oss环境初始化
+          if [[ ! -f ossutil64 ]]; then
+              curl -LO https://idcos.oss-cn-hangzhou-internal.aliyuncs.com/ossutil64
+              chmod +x ossutil64
+              cat > /root/.ossutilconfig <<EOF
+        [Credentials]
+        language=EN
+        endpoint={{ oss_address }}
+        accessKeyID={{ oss_ak }}
+        accessKeySecret={{ oss_sk }}
+        EOF
+          fi
+
+        # 获取备份文件
+          ./ossutil64 cp -f oss://cloudcmp/{{ cloudiac_env_id }}.tgz . || :
+
+          if [[ -f {{ cloudiac_env_id }}.tgz ]]; then
+              tar xzvf {{ cloudiac_env_id }}.tgz
+          fi
+
+        # 导入数据库备份
+          if [[ -f {{ cloudiac_env_id }}.sql ]]; then
+              docker cp {{ cloudiac_env_id }}.sql mysql:/tmp/
+              docker exec -t mysql bash -c "mysql -uroot -pYunjikeji#123 < /tmp/{{ cloudiac_env_id }}.sql"
+          fi
+        
+        else
+          echo "Env id {{ cloudiac_env_id }} is active,skip import."
+        fi
+      when: is_backup == "true"
