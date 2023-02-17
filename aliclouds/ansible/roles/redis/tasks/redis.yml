@@ -1,0 +1,196 @@
+---
+- name: 清理yum缓存
+  shell: yum clean all
+- name: 安装编译所需要的环境
+  yum:
+    name: "@Development Tools"
+    state: present
+
+- name: 创建管理用户所属组
+  group:
+    name: appgrp
+    gid: 1000
+    state: present
+
+- name: 创建redis管理用户
+  user:
+    name: rtpapp
+    uid: 1000
+    groups: appgrp
+    password: "{{ userPassword | password_hash('sha512') }}"
+    shell: /bin/bash
+    home: /userhome/rtpapp
+    expires: -1
+
+- name: 创建相关目录
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+    group: appgrp
+    owner: rtpapp
+    mode: 0755
+  loop:
+    - "{{ redisDir }}"
+    - /approot/rtp-rcc/conf
+    - /approot/rtp-rcc/data
+    - /approot/rtp-rcc/pidfile
+    - /applog/rtp-rcc/redis/logs
+    - /appoper/pgmbak/rtp-rcc
+    - /applog/nmon/logs
+
+- name: 初始化sysctl
+  lineinfile:
+    path: /etc/sysctl.conf
+    line: "{{ item }}"
+  loop:
+    - vm.overcommit_memory=1
+    - vm.swappiness=1
+    - net.core.somaxconn=2048
+    - net.ipv4.tcp_max_syn_backlog=2048
+
+- name: 初始化 rc.local
+  lineinfile:
+    path: /etc/rc.local
+    line: "{{ item }}"
+  loop:
+    - echo never > /sys/kernel/mm/transparent_hugepage/enabled
+    - echo never > /sys/kernel/mm/transparent_hugepage/defrag
+
+- name: 初始化环境变量
+  shell: "{{ item }}"
+  loop:
+    - echo 1 > /proc/sys/vm/swappiness
+    - echo never > /sys/kernel/mm/transparent_hugepage/enabled
+    - echo never > /sys/kernel/mm/transparent_hugepage/defrag
+    - echo 2048 > /proc/sys/net/core/somaxconn
+    - echo 2048 > /proc/sys/net/ipv4/tcp_max_syn_backlog
+    - sysctl -p
+
+- name: rc.local添加执行权限
+  file:
+    path: /etc/rc.d/rc.local
+    mode: a+x 
+
+- name: 下载redis安装包
+  get_url:
+    url: "{{ softwareServerIpPath }}/redis-{{ redisVersion }}.tar.gz"
+    dest: "{{ redisDir }}/"
+    mode: 0644
+    force: yes
+    validate_certs: no
+
+- name: 解压redis安装包
+  unarchive: 
+    src: "{{ softwareServerIpPath }}/redis-{{ redisVersion }}.tar.gz"
+    dest: "{{ redisDir }}/"
+    remote_src: yes
+
+- name: 编译安装redis
+  make:
+    chdir: "{{ redisDir }}/redis-{{ redisVersion }}"
+    target: install
+    file: "{{ redisDir }}/redis-{{ redisVersion }}/Makefile"
+    params:
+      PREFIX: "redis"
+
+- name: 移除存量redis命令
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /usr/bin/redis-server
+    - /usr/bin/redis-sentinel
+    - /usr/bin/redis-cli
+    - /usr/bin/redis-benchmark
+    - /usr/bin/redis-check-aof
+    - /usr/bin/redis-check-rdb
+
+- name: 链接redis命令文件
+  file:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    state: link
+  with_items:
+    - { src: "{{ redisDir }}/redis-{{ redisVersion }}/src/redis/bin/redis-server", dest: /usr/bin/redis-server }
+    - { src: "{{ redisDir }}/redis-{{ redisVersion }}/src/redis/bin/redis-sentinel", dest: /usr/bin/redis-sentinel }
+    - { src: "{{ redisDir }}/redis-{{ redisVersion }}/src/redis/bin/redis-cli", dest: /usr/bin/redis-cli }
+    - { src: "{{ redisDir }}/redis-{{ redisVersion }}/src/redis/bin/redis-benchmark", dest: /usr/bin/redis-benchmark }
+    - { src: "{{ redisDir }}/redis-{{ redisVersion }}/src/redis/bin/redis-check-aof", dest: /usr/bin/redis-check-aof }
+    - { src: "{{ redisDir }}/redis-{{ redisVersion }}/src/redis/bin/redis-check-rdb", dest: /usr/bin/redis-check-rdb }
+
+- name: 更改安装目录所有权
+  file:
+    path: "{{ redisDir }}"
+    state: directory
+    recurse: yes
+    group: appgrp
+    owner: rtpapp
+    mode: 0755
+
+- name: redis目录改名取消版本号
+  copy:
+    src: "{{ redisDir }}/redis-{{ redisVersion }}/"
+    dest: "{{ redisDir }}/redis/"
+    owner: rtpapp
+    group: appgrp
+    mode: 0755
+    remote_src: yes
+
+- name: 调整redis配置
+  lineinfile:
+    path: "{{ redisDir }}/redis/redis.conf"
+    regexp: "{{ item.src }}"
+    line: "{{ item.dest }}"
+  loop:
+    - { src: '^port 6379', dest: "port {{ servicePort }}" }
+    - { src: "^bind 127.0.0.1", dest: "bind 0.0.0.0" }
+    - { src: "^pidfile /var/run/redis_6379.pid", dest: "pidfile {{ redisDir }}/redis/redis.pid" }
+    - { src: "^appendonly no", dest: "appendonly yes" }
+    - { src: "^protected-mode yes", dest: "protected-mode no" }
+    - { src: "^daemonize no", dest: "daemonize yes" }
+    - { src: '^logfile ""', dest: 'logfile "{{ redisDir }}/redis/redis.log"' }
+    - { src: '^logfile ""', dest: 'logfile "{{ redisDir }}/redis/redis.log"' }
+
+- name: 配置主从模式
+  lineinfile:
+    path: "{{ redisDir }}/redis/redis.conf"
+    line: 'slaveof {{groups["redis"][0]}} "{{ servicePort }}"'
+  when: 
+    - ansible_play_hosts.index(inventory_hostname) != 0
+    - clusterModel  == "cluster" or clusterModel == "sentinel"
+
+- name: 更改安装目录所有权
+  file:
+    path: "{{ redisDir }}"
+    state: directory
+    recurse: yes
+    group: appgrp
+    owner: rtpapp
+    mode: 0755
+
+- name: 启动redis服务
+  become_user: rtpapp
+  shell: "/usr/bin/redis-server {{ redisDir }}/redis/redis.conf"
+
+- name: 配置哨兵模式参数
+  lineinfile:
+    path: "{{ redisDir }}/redis/sentinel.conf"
+    regexp: "{{ item.src }}"
+    line: "{{ item.dest }}"
+  loop:
+    - { src: '^port 26379', dest: "port {{ sentinelPort }}" }
+    - { src: "^daemonize no", dest: "daemonize yes" }
+    - { src: 'sentinel monitor mymaster 127.0.0.1 6379 2', dest: 'sentinel monitor mymaster {{groups["redis"][0]}} {{ servicePort }} 2' }
+  when: clusterModel == "sentinel"
+
+- name: 配置哨兵模式监听地址
+  lineinfile:
+    path: "{{ redisDir }}/redis/sentinel.conf"
+    line: "bind 0.0.0.0"
+  when: clusterModel == "sentinel"
+
+- name: 启动哨兵
+  become_user: rtpapp
+  shell: "/usr/bin/redis-server {{ redisDir }}/redis/sentinel.conf --sentinel"
+  when: clusterModel == "sentinel"

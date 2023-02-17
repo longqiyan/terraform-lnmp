@@ -1,0 +1,26 @@
+---
+- name: install Redis
+  hosts: redis
+  vars:
+    - isInstallRedis: "{{ install_redis }}"
+    - redisDir: "{{ install_path }}"
+    - clusterModel: "{{ cluster_model }}"
+    - servicePort: "{{ service_port }}"
+    - redisVersion: "{{ redis_version }}"
+    - servicePort: "{{ service_port }}" 
+    - sentinelPort: "{{ sentinel_port }}"
+    - userPassword: "{{ user_password }}"
+    - softwareServerIp: "{{ software_ip }}"
+    - softwarePath: "{{ software_path }}"
+    - softwareServerIpPath: http://{{ softwareServerIp }}/{{ softwarePath }}
+
+  pre_tasks:
+    - name: 配置base yum仓库
+      yum_repository:
+        name: base
+        description: BASE YUM repo
+        baseurl: "{{ softwareServerIpPath }}"
+        enabled: yes
+        gpgcheck: no
+  roles:
+    - role: redis
